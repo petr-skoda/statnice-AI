@@ -1,0 +1,420 @@
+%=============================================================================
+\section{IT Governance}
+%=============================================================================
+
+\subsection{Governance vs. Management}
+
+\subsubsection{Základní rozdíl}
+
+\begin{center}
+\begin{tabular}{p{5.5cm}p{5.5cm}}
+\toprule
+\textbf{Governance (Správa/Řízení)} & \textbf{Management (Řízení)} \\
+\midrule
+Zajišťuje hodnocení potřeb, podmínek a možností zainteresovaných stran & Plánuje, buduje, provozuje a monitoruje aktivity \\
+Stanovuje směr přes priority a rozhodování & Odpovídá za realizaci strategie \\
+Monitoruje výkonnost a shodu & Řídí každodenní provoz \\
+Zodpovídá \textbf{rada} (Board, ředitelé) & Zodpovídá \textbf{management} (manažeři, vedoucí) \\
+``Kdo a co'' & ``Jak a kdo konkrétně'' \\
+Hodnotí (Evaluate) -- Řídí (Direct) -- Monitoruje (Monitor) & Plánuje (Plan) -- Buduje (Build) -- Provozuje (Run) -- Monitoruje (Monitor) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Enterprise Governance of IT (EGIT)} = zajistí, že IT strategie je v souladu s podnikovou strategií
+a že IT přináší hodnotu.
+
+\subsubsection{Klíčové oblasti EGIT}
+
+\begin{itemize}
+  \item \textbf{Soulad se strategií (Strategic Alignment)} -- IT plány jsou propojeny s business plány
+  \item \textbf{Tvorba hodnoty (Value Delivery)} -- IT investice přinášejí přislíbené benefity
+  \item \textbf{Řízení zdrojů (Resource Management)} -- optimální využití IT zdrojů (lidé, technologie, data)
+  \item \textbf{Řízení rizik (Risk Management)} -- identifikace a zvládání IT rizik
+  \item \textbf{Měření výkonnosti (Performance Measurement)} -- sledování a monitorování IT výkonnosti (BSC, KPI)
+\end{itemize}
+
+%=============================================================================
+\subsection{COBIT (Control Objectives for Information Technology)}
+%=============================================================================
+
+\textbf{COBIT} je komplexní rámec pro správu a řízení podnikové informatiky vydaný organizací ISACA.
+Aktuální verze je \textbf{COBIT 2019} (vydána listopad 2018); předchozí verze COBIT 5 (2012) je stále
+rozšířená a v literatuře hojně citovaná -- zkoušející se mohou ptát na obě.
+
+\begin{center}
+\begin{tabular}{p{4cm}p{4.5cm}p{4.5cm}}
+\toprule
+\textbf{Vlastnost} & \textbf{COBIT 5 (2012)} & \textbf{COBIT 2019} \\
+\midrule
+Verze & 5 & 2019 (rok vydání, dále ročníky) \\
+Počet cílů & 37 procesů & 40 governance/management objectives \\
+Terminologie & ``Procesy'' & ``Governance \& Management Objectives'' \\
+Přizpůsobení & Jeden přístup pro všechny & \textbf{Design Factors} -- rámec se přizpůsobí organizaci \\
+Nové koncepty & -- & \textbf{Focus Areas} (DevSecOps, cloud, kyberb.) \\
+Performance model & PAM (6 úrovní) & Aktualizovaný, více v souladu s CMMI \\
+Open source & Částečně & Více materiálů zdarma \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Klíčové novinky COBIT 2019}
+
+\paragraph{Design Factors (Faktory návrhu)}
+COBIT 2019 zavádí 11 \textbf{design factors} -- organizace si rámec \textit{přizpůsobí} podle svého
+kontextu místo aplikace jednoho univerzálního přístupu:
+\begin{itemize}
+  \item Typ organizace (soukromá, veřejná, nezisková)
+  \item Velikost organizace
+  \item IT strategie (nákladová optimalizace vs. inovace)
+  \item Model sourcing IT (in-house, outsourcing, cloud)
+  \item Metody vývoje IT (Agile, Waterfall, DevOps)
+  \item Požadavky na compliance (GDPR, DORA, ISO 27001)
+  \item Rizikový profil organizace a další
+\end{itemize}
+
+\textit{Příklad:} startupová fintech firma s 50 zaměstnanci a 100\,\% cloud infrastrukturou
+použije COBIT 2019 odlišně než velká banka s on-premise legacy systémy a regulatorními požadavky ČNB.
+
+\paragraph{Focus Areas (Oblast zaměření)}
+Tematické rozšíření COBIT 2019 pro specifické domény:
+\begin{itemize}
+  \item \textbf{Small and Medium Enterprises} -- zjednodušené pokyny pro menší organizace
+  \item \textbf{Cybersecurity} -- řízení kybernetické bezpečnosti v souladu s NIST, ISO 27001
+  \item \textbf{Digital Transformation} -- governance digitální transformace
+  \item \textbf{DevSecOps} -- integrace bezpečnosti do CI/CD pipeline
+  \item \textbf{Cloud Governance} -- řízení cloudových služeb
+\end{itemize}
+
+\subsubsection{Pět principů COBIT 5}
+
+\textit{Principy COBIT 5 jsou stále relevantní -- COBIT 2019 je rozšiřuje, ne nahrazuje.}
+
+\paragraph{Princip 1: Naplňování potřeb zainteresovaných stran}
+
+\subsubsection{Pět principů COBIT 5}
+
+\paragraph{Princip 1: Naplňování potřeb zainteresovaných stran}
+Cílem je tvorba hodnoty pro zainteresované strany. COBIT pracuje s kaskádou cílů:
+Potřeby zainteresovaných stran $\to$ Podnikové cíle $\to$ IT-related cíle $\to$ Cíle facilitátorů.
+
+\paragraph{Princip 2: Pokrytí organizace od začátku do konce (End-to-End)}
+COBIT zahrnuje celé řízení podnikových IT aktiv:
+\begin{itemize}
+  \item Zahrnuje všechny IT funkce a procesy v organizaci
+  \item Pokrývá interní i externí IT providery
+  \item Integruje governance a management
+\end{itemize}
+
+\paragraph{Princip 3: Aplikace jediného integrovaného rámce}
+COBIT je zastřešující rámec, který lze kombinovat s jinými standardy:
+\begin{itemize}
+  \item Soulad s ISO/IEC 38500 (IT Governance)
+  \item Integrace s ITIL (správa IT služeb), ISO 27001 (bezpečnost), PMBOK (projekty)
+  \item Jeden rámec namísto fragmentace
+\end{itemize}
+
+\paragraph{Princip 4: Uplatnění holistického přístupu}
+COBIT definuje 7 facilitátorů (enablers) governance a managementu:
+\begin{enumerate}
+  \item Principy, politiky a rámce
+  \item Procesy
+  \item Organizační struktury
+  \item Kultura, etika a chování
+  \item Informace
+  \item Služby, infrastruktura a aplikace
+  \item Lidé, dovednosti a kompetence
+\end{enumerate}
+
+\paragraph{Princip 5: Oddělení governance od managementu}
+Viz tabulka výše -- COBIT jasně odděluje oblast governance (EDM domény) od oblasti managementu
+(APO, BAI, DSS, MEA domény).
+
+\subsubsection{Domény procesů COBIT 5}
+
+\paragraph{Governance (EDM -- Evaluate, Direct, Monitor)}
+\begin{itemize}
+  \item EDM01 -- Zajišťování nastavení governance rámce
+  \item EDM02 -- Zajišťování tvorby hodnot
+  \item EDM03 -- Zajišťování optimalizace rizik
+  \item EDM04 -- Zajišťování optimalizace zdrojů
+  \item EDM05 -- Zajišťování transparentnosti k zainteresovaným stranám
+\end{itemize}
+
+\paragraph{Management (4 domény, 32 procesů)}
+\begin{itemize}
+  \item \textbf{APO (Align, Plan, Organise)} -- 13 procesů; strategie, architektura, HR, bezpečnost
+  \item \textbf{BAI (Build, Acquire, Implement)} -- 10 procesů; projekty, změny, kapacity
+  \item \textbf{DSS (Deliver, Service, Support)} -- 6 procesů; provoz, správa incidentů a problémů
+  \item \textbf{MEA (Monitor, Evaluate, Assess)} -- 3 procesy; výkonnost, shoda, IT governance
+\end{itemize}
+
+\subsubsection{Model procesní vyspělosti COBIT (PAM)}
+
+COBIT definuje 6 úrovní vyspělosti (zralosti) procesu:
+\begin{enumerate}
+  \setcounter{enumi}{-1}
+  \item \textbf{Incomplete} -- proces neexistuje nebo nedosahuje svého účelu
+  \item \textbf{Performed} -- proces existuje a dosahuje svého účelu (ad-hoc)
+  \item \textbf{Managed} -- proces je plánovaný, monitorovaný a přizpůsobovaný
+  \item \textbf{Established} -- proces je definovaný a standardizovaný v organizaci
+  \item \textbf{Predictable} -- proces je statisticky měřen a předvídatelný
+  \item \textbf{Optimizing} -- proces se průběžně zlepšuje; inovace a optimalizace
+\end{enumerate}
+
+Hodnocení vychází z ISO/IEC 15504 (SPICE). Cílová úroveň závisí na strategickém významu procesu.
+
+\subsubsection{COBIT v praxi -- příklad z bankovnictví}
+
+\textit{Scénář: Česká banka zavádí COBIT jako governance rámec. Jak se jednotlivé domény projevují v reálném provozu?}
+
+\begin{center}
+\begin{tabular}{p{1.8cm}p{2.6cm}p{3.5cm}p{5cm}}
+\toprule
+\textbf{Doména} & \textbf{Kdo} & \textbf{Co konkrétně dělá} & \textbf{Příklad v bance} \\
+\midrule
+\textbf{EDM} \newline (Governance) &
+  Představenstvo, CIO &
+  Schvaluje IT strategii, sleduje výsledky, zajišťuje soulad s regulací &
+  Představenstvo schválí investici 50 mil.\ Kč do modernizace core bankingu; stanoví rizikový apetit pro cloud \\
+\midrule
+\textbf{APO} \newline (Align, Plan) &
+  IT ředitel, architekti &
+  Tvoří IT strategii, plánuje portfolio projektů, řídí bezpečnost a architekturu &
+  IT strategie na 3 roky: migrace do cloudu, zavedení open bankingu (PSD2), cyber security program \\
+\midrule
+\textbf{BAI} \newline (Build, Acquire) &
+  Projektoví manažeři, vývojáři &
+  Realizuje projekty, řídí změny, testuje a nasazuje nová řešení &
+  Projekt nové mobilní bankovní aplikace: PMP, change management, UAT testování, rollout \\
+\midrule
+\textbf{DSS} \newline (Deliver, Support) &
+  IT operace, service desk &
+  Provozuje systémy, řeší incidenty, zajišťuje dostupnost &
+  Sobotní výpadek platebního systému: P1 incident, eskalace, 2-hodinnová obnova, komunikace klientům \\
+\midrule
+\textbf{MEA} \newline (Monitor, Assess) &
+  Interní audit, CISO &
+  Měří shodu, hodnotí výkonnost, reportuje regulátorovi (ČNB) &
+  Čtvrtletní audit: IT shoda s DORA regulací, měření SLA, audit kyberbezpečnosti pro ČNB \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Maturity model v praxi:} Banka si nechá udělat COBIT assessment. Zjistí, že:
+\begin{itemize}
+  \item Incident management (DSS02) je na úrovni \textbf{3 -- Established} (procesy definovány, ale ne měřeny)
+  \item Change management (BAI06) je na úrovni \textbf{2 -- Managed} (ad-hoc přístupy, bez jednotného procesu)
+  \item Cíl: oba procesy na úroveň \textbf{4 -- Predictable} do 18 měsíců (vyžaduje regulátor)
+\end{itemize}
+
+%=============================================================================
+\subsection{ITIL (IT Infrastructure Library)}
+%=============================================================================
+
+\textbf{ITIL} je sada doporučených postupů pro správu IT služeb (IT Service Management -- ITSM).
+Zaměřuje se na soulad IT služeb s potřebami businessu.
+
+\subsubsection{ITIL 3 (v3, 2007/2011)}
+
+Organizovaný kolem 5 knih odpovídajících životnímu cyklu IT služby:
+
+\begin{enumerate}
+  \item \textbf{Service Strategy (Strategie služeb)} -- definování trhu a zákazníků; finanční řízení IT
+  \item \textbf{Service Design (Návrh služeb)} -- návrh nových nebo změněných služeb; SLA, kapacita, dostupnost
+  \item \textbf{Service Transition (Přechod služeb)} -- bezpečný přechod do provozu; change management, CMDB
+  \item \textbf{Service Operation (Provoz služeb)} -- každodenní provoz; incident management, problem management,
+    service desk
+  \item \textbf{Continual Service Improvement (Kontinuální zlepšování)} -- PDCA cyklus; metriky, CSF, KPI
+\end{enumerate}
+
+\subsubsection{ITIL v praxi -- klíčové procesy s příklady}
+
+\paragraph{Incident Management vs. Problem Management -- rozdíl na příkladu}
+
+Toto je nejdůležitější rozlišení v ITIL, které profesor Zeman přímo zkouší:
+
+\begin{center}
+\begin{tabular}{p{2.2cm}p{5.2cm}p{5.2cm}}
+\toprule
+ & \textbf{Incident Management} & \textbf{Problem Management} \\
+\midrule
+\textbf{Cíl} & Co nejrychleji obnovit službu & Najít a odstranit kořenovou příčinu \\
+\textbf{Otázka} & ``Jak to opravit teď?'' & ``Proč to padlo a jak tomu příště zabránit?'' \\
+\textbf{Výstup} & Obnovená služba & Trvalá oprava / workaround \\
+\textbf{Priorita} & Rychlost & Důkladnost \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{Scénář: v pondělí ráno padl produkční web e-shopu.}
+
+\textbf{Incident Management (okamžitá reakce):}
+\begin{enumerate}
+  \item \textbf{Detekce:} monitorovací nástroj (Zabbix/Datadog) detekuje výpadek a vytvoří ticket v JIRA/ServiceNow; závažnost P1
+  \item \textbf{Záznam:} service desk zaznamená: čas vzniku, dotčené systémy, dopad (5\,000 uživatelů nemůže nakupovat)
+  \item \textbf{Klasifikace a eskalace:} P1 = eskalace na L2/L3 tým; přidání on-call inženýrů
+  \item \textbf{Diagnostika:} tým zjistí, že databázový server má plný disk (logs) $\to$ aplikace nemohou zapisovat
+  \item \textbf{Řešení:} smazání starých logů, restart aplikačního serveru $\to$ web funguje po 47 minutách
+  \item \textbf{Uzavření:} ticket uzavřen; uživatelé notifikováni; post-incident report do 24 hodin
+\end{enumerate}
+$\Rightarrow$ Incident vyřešen rychle, ale \textbf{příčina stále existuje} -- logy rostou dál.
+
+\textbf{Problem Management (týden po incidentu):}
+\begin{enumerate}
+  \item \textbf{Analýza:} tým dělá Root Cause Analysis (RCA); zjistí, že logy nejsou rotovány (logrotate selhal po upgradu)
+  \item \textbf{Known Error:} zaznamenají Known Error do databáze (KEDB): ``logy rostou bez omezení po upgrade na v2.5''
+  \item \textbf{Trvalá oprava:} opravý konfiguraci logrotate na všech serverech; přidají monitoring volného místa s alertem při $<$15\,\%
+  \item \textbf{Prevence:} aktualizují checklist pro budoucí upgrady -- ověřit logrotate konfiguraci
+\end{enumerate}
+$\Rightarrow$ Kořenová příčina odstraněna; tento typ incidentu se nebude opakovat.
+
+\paragraph{Change Management -- jak projde změna systémem}
+
+Každá změna v produkci musí projít procesem, aby se předešlo novým incidentům:
+
+\begin{center}\small
+\textbf{RFC} $\xrightarrow{\text{posouzení}}$ \textbf{CAB schválení} $\xrightarrow{\text{nasazení}}$ \textbf{PIR hodnocení}
+\end{center}
+
+\begin{itemize}
+  \item \textbf{RFC (Request for Change)} -- žádost o změnu; popis co, proč, rizika, rollback plán
+  \item \textbf{CAB (Change Advisory Board)} -- komise (IT manažeři, zástupci businessu, bezpečnost) schvaluje rizikové změny; standardní/nouzové změny mají zjednodušený proces
+  \item \textbf{PIR (Post-Implementation Review)} -- po nasazení: fungovalo to podle plánu? Co příště zlepšit?
+\end{itemize}
+
+\textit{Příklad:} vývojář chce nasadit novou verzi platebního modulu v pátek večer.
+CAB zamítne -- v pátek se změny nenasazují (výpadek přes víkend = největší dopad). Nasazení přeplánováno na úterý ráno s definovaným rollback postupem.
+
+\subsubsection{ITIL 4 (2019)}
+
+Modernizovaná verze reagující na DevOps, Agile, Cloud a digitální transformaci.
+
+\paragraph{Klíčové koncepty ITIL 4}
+\begin{itemize}
+  \item \textbf{Service Value System (SVS)} -- holistický pohled na to, jak všechny komponenty a aktivity
+    organizace spolupracují na vytváření hodnoty
+  \item \textbf{Service Value Chain (SVC)} -- 6 aktivit: Plan, Improve, Engage, Design \& Transition, Obtain/Build, Deliver \& Support
+  \item \textbf{4 dimenze správy služeb:}
+    \begin{enumerate}
+      \item Organizace a lidé
+      \item Informace a technologie
+      \item Partneři a dodavatelé
+      \item Procesy a hodnotoví toky
+    \end{enumerate}
+  \item \textbf{Guiding principles (7 průvodních principů):}
+    \begin{enumerate}
+      \item Zaměřit se na hodnotu (Focus on value)
+      \item Začínat od stávajícího stavu (Start where you are)
+      \item Postupovat iterativně s využitím zpětné vazby
+      \item Spolupracovat a podporovat viditelnost
+      \item Přemýšlet a pracovat holisticky
+      \item Zachovávat jednoduchost a praktičnost
+      \item Optimalizovat a automatizovat
+    \end{enumerate}
+\end{itemize}
+
+\paragraph{ITIL 4 -- Management Practices}
+ITIL 4 nepoužívá termín ``procesy'', ale ``practices'' (34 celkem):
+\begin{itemize}
+  \item \textbf{General management} -- 14 praktik (risk management, strategie, SLM, bezpečnostní management)
+  \item \textbf{Service management} -- 17 praktik (incident management, change enablement, service desk)
+  \item \textbf{Technical management} -- 3 praktiky (deployment management, infrastructure management)
+\end{itemize}
+
+\paragraph{ITIL 4 Specializační moduly (2020--2021)}
+Po vydání základního ITIL 4 Foundation vydala AXELOS série specializačních publikací:
+\begin{itemize}
+  \item \textbf{Create, Deliver \& Support (CDS)} -- jak navrhovat, budovat a provozovat IT produkty a služby;
+    zaměřen na DevOps, CI/CD, service desk a incident management
+  \item \textbf{Drive Stakeholder Value (DSV)} -- jak budovat hodnotné vztahy se zákazníky a uživateli;
+    Customer Journey, SLA vyjednávání, onboarding
+  \item \textbf{High-velocity IT (HVIT)} -- jak dosáhnout rychlých iterací v digitálním prostředí;
+    soulad s DevOps, Lean, Agile a Site Reliability Engineering (SRE)
+  \item \textbf{Direct, Plan \& Improve (DPI)} -- jak řídit a zlepšovat IT organizaci na strategické úrovni;
+    propojení s COBIT a dalšími governance rámci
+  \item \textbf{Digital \& IT Strategy (DITS)} -- pro C-level; jak formulovat IT/digitální strategii;
+    soulad businessu a IT; digitální transformace
+\end{itemize}
+
+\textbf{Praktický dopad:} ITIL 4 Foundation + jeden nebo více specializačních modulů tvoří
+certifikační cestu \textbf{ITIL 4 Managing Professional} nebo \textbf{ITIL 4 Strategic Leader}.
+Firmy jako O2, Vodafone nebo ČEZ vyžadují ITIL certifikaci pro IT service management role.
+
+\paragraph{ITIL 4 v praxi -- Service Value Chain na příkladu nové funkce}
+
+\textit{Zákazník (product manager) požaduje novou funkci: ``zákazník dostane push notifikaci, když mu přijde platba.''}
+
+\begin{center}
+\begin{tabular}{p{3cm}p{9cm}}
+\toprule
+\textbf{SVC aktivita} & \textbf{Co se konkrétně děje} \\
+\midrule
+\textbf{Plan} &
+  IT a business definují prioritu funkce v product backlogu; odhadnou ROI a technickou složitost \\
+\textbf{Engage} &
+  Product owner upřesní požadavky se zákazníky (user research); dohodne se s dodavatelem push notifikací (Firebase) \\
+\textbf{Design \& Transition} &
+  Vývojáři navrhnou architekturu (event-driven: platba $\to$ Kafka $\to$ notification service);
+  připraví deployment pipeline; security review \\
+\textbf{Obtain/Build} &
+  Sprint: vývojáři kódují, QA testuje, code review; integrace s Firebase; load testing \\
+\textbf{Deliver \& Support} &
+  Feature nasazena (canary deploy -- nejprve 5\,\% uživatelů); monitoring latence notifikací;
+  service desk dostane FAQ pro případné dotazy zákazníků \\
+\textbf{Improve} &
+  Po 2 týdnech: analýza dat -- 78\,\% uživatelů notifikace otevře; latence 3s je příliš vysoká;
+  optimalizace fronty zpráv; plánuje se batched delivery \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Proč je ITIL 4 lepší než ITIL 3 pro tento příklad?}
+V ITIL 3 by funkce šla přes striktní životní cyklus (Strategy $\to$ Design $\to$ Transition $\to$ Operation) --
+trvalo by měsíce. ITIL 4 umožňuje iterativní přístup (Agile/DevOps): funkce jde do produkce za 2 týdny,
+zpětná vazba je okamžitá, zlepšení probíhá průběžně.
+
+\subsubsection{Srovnání ITIL 3 vs ITIL 4}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Aspekt} & \textbf{ITIL v3} & \textbf{ITIL 4} \\
+\midrule
+Organizační jednotka & Procesy & Practices (praktiky) \\
+Struktura & 5 knih/fází životního cyklu & Service Value System (SVS) \\
+Kontejner & ITIL v3 Service Lifecycle & Service Value Chain \\
+Integrace & Silo-přístup & Agile, DevOps, Lean \\
+Zaměření & IT operace & Tvorba hodnoty pro business \\
+Certifikace & Foundation, Practitioner... & Foundation, Specialist... \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{profesorbox}[Otázky profesorů k tématu: IT Governance]
+\textbf{Pour Jan, doc. Ing., CSc.}
+\begin{itemize}
+  \item Co je IT Governance a jaký je rozdíl od IT Managementu?
+  \item Jaké jsou klíčové oblasti Enterprise Governance of IT?
+\end{itemize}
+\textbf{Maryška Miloš, doc. Ing., Ph.D.}
+\begin{itemize}
+  \item Popište 5 principů COBIT 5.
+  \item Jaké jsou domény procesů v COBIT 5 a co obsahují?
+\end{itemize}
+\textbf{Chudán David, Ing., Ph.D.}
+\begin{itemize}
+  \item Jaký je rozdíl mezi ITIL 3 a ITIL 4?
+  \item Co je Service Value System v ITIL 4?
+\end{itemize}
+\textbf{Řepa Václav, prof. Ing., CSc.}
+\begin{itemize}
+  \item Co je COBIT a pro koho je určen?
+  \item Jaký je vztah mezi COBIT a ITIL?
+\end{itemize}
+\textbf{Zeman Václav, Ing., Ph.D.}
+\begin{itemize}
+  \item Vyjmenujte 7 průvodních principů ITIL 4.
+  \item Co je incident management a problem management?
+\end{itemize}
+\end{profesorbox}

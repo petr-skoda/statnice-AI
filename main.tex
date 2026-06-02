@@ -1,0 +1,105 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[czech]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows,positioning,calc}
+\usepackage{float}
+
+\geometry{margin=2.5cm}
+
+% Styl pro otázky profesorů
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{profesorbox}[1][]{
+  enhanced,
+  breakable,
+  colback=gray!10,
+  colframe=gray!50,
+  title={#1},
+  fonttitle=\bfseries\small,
+  before skip=10pt,
+  after skip=10pt
+}
+
+% Styl pro kód
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries,
+  frame=single,
+  breaklines=true,
+  language=SQL,
+  inputencoding=utf8,
+  extendedchars=true,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'{\i}}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {ů}{{\r{u}}}1 {ý}{{\'y}}1 {č}{{\v{c}}}1 {ď}{{\v{d}}}1 {ě}{{\v{e}}}1
+    {ň}{{\v{n}}}1 {ř}{{\v{r}}}1 {š}{{\v{s}}}1 {ť}{{\v{t}}}1 {ž}{{\v{z}}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {Ů}{{\r{U}}}1 {Ý}{{\'Y}}1 {Č}{{\v{C}}}1 {Ď}{{\v{D}}}1 {Ě}{{\v{E}}}1
+    {Ň}{{\v{N}}}1 {Ř}{{\v{R}}}1 {Š}{{\v{S}}}1 {Ť}{{\v{T}}}1 {Ž}{{\v{Z}}}1
+}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+\title{\textbf{Státnicové okruhy -- Aplikovaná informatika}\\
+\large Magistr AIN -- komplexní příprava}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\input{01_zaklady_odborne_prace}
+\newpage
+
+\input{02_ikt}
+\newpage
+
+\input{03_programovani_java}
+\newpage
+
+\input{04_softwarove_inzenyrstvi}
+\newpage
+
+\input{05_databaze}
+\newpage
+
+\input{06_datova_analytika}
+\newpage
+
+\input{07_zpracovani_informaci}
+\newpage
+
+\input{08_it_governance}
+\newpage
+
+\input{09_podnikove_is}
+\newpage
+
+\input{10_analyza_navrh_is}
+\newpage
+
+\input{11_bezpecnost_is}
+
+\end{document}

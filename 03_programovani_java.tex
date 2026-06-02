@@ -1,0 +1,466 @@
+%=============================================================================
+\section{Programování v Javě a objektově-orientované paradigma}
+%=============================================================================
+
+\subsection{Objektově-orientované programování (OOP)}
+
+\subsubsection{Základní principy OOP}
+
+Objektově-orientované programování je programovací paradigma organizující software kolem objektů,
+které kombinují data (atributy/pole) a chování (metody).
+
+\paragraph{1. Abstrakce (Abstraction)}
+Proces skrytí složitých implementačních detailů a zobrazení pouze nezbytné funkcionality.
+\begin{itemize}
+  \item Zaměřuje se na \textit{co} objekt dělá, ne \textit{jak} to dělá
+  \item Realizuje se pomocí abstraktních tříd (\texttt{abstract class}) a rozhraní (\texttt{interface})
+  \item Příklad: rozhraní \texttt{List} v Javě -- programátor pracuje s metodami \texttt{add()}, \texttt{get()},
+    \texttt{remove()}, aniž ví, zda jde o \texttt{ArrayList} nebo \texttt{LinkedList}
+\end{itemize}
+
+\begin{lstlisting}[language=Java, caption=Abstrakce -- rozhraní Tvar]
+// Abstrakce: definujeme CO umí tvar, ne JAK to dělá
+interface Tvar {
+    double obsah();       // kazdý tvar musí umět spočítat obsah
+    double obvod();
+    String nazev();
+}
+
+// Konkrétní implementace -- SKRYTÉ od uživatele
+class Kruh implements Tvar {
+    private double polomer;
+    public Kruh(double r) { this.polomer = r; }
+
+    @Override public double obsah() { return Math.PI * polomer * polomer; }
+    @Override public double obvod() { return 2 * Math.PI * polomer; }
+    @Override public String nazev()  { return "Kruh"; }
+}
+
+class Obdelnik implements Tvar {
+    private double a, b;
+    public Obdelnik(double a, double b) { this.a = a; this.b = b; }
+
+    @Override public double obsah() { return a * b; }
+    @Override public double obvod() { return 2 * (a + b); }
+    @Override public String nazev()  { return "Obdelnik"; }
+}
+
+// Klientský kód pracuje POUZE s abstrakcí Tvar
+// nezajímá ho, co je uvnitř
+public static void vypisTvary(List<Tvar> tvary) {
+    for (Tvar t : tvary) {
+        System.out.printf("%s: obsah=%.2f%n", t.nazev(), t.obsah());
+    }
+}
+\end{lstlisting}
+
+\textbf{Proč je to abstrakce?} Funkce \texttt{vypisTvary} neví, zda pracuje s kruhem nebo obdélníkem -- pracuje pouze s rozhraním \texttt{Tvar}. Implementační detaily (vzorec pro obsah kruhu) jsou skryté za rozhraním. Lze přidat nový tvar (\texttt{Trojuhelnik}) \textbf{bez jakékoliv změny} v \texttt{vypisTvary}.
+
+\paragraph{2. Zapouzdření (Encapsulation)}
+Sdružení dat a metod, které s nimi pracují, do jednoho celku (třídy) a omezení přístupu zvenčí.
+\begin{itemize}
+  \item Data (atributy) by měla být \texttt{private}, přístup přes \texttt{public} gettery/settery
+  \item Chrání interní stav objektu před neplatným nastavením
+  \item \textbf{Modifikátory přístupu v Javě:}
+    \begin{itemize}
+      \item \texttt{private} -- přístup pouze z dané třídy
+      \item \texttt{protected} -- přístup z třídy a podtříd
+      \item \texttt{package-private} (výchozí) -- přístup v rámci balíčku
+      \item \texttt{public} -- přístup odkudkoliv
+    \end{itemize}
+\end{itemize}
+
+\begin{lstlisting}[language=Java, caption=Zapouzdření v Javě]
+public class BankovniUcet {
+    private double zustatek;  // soukromé pole
+
+    public double getZustatek() {
+        return zustatek;
+    }
+
+    public void vlozit(double castka) {
+        if (castka > 0) zustatek += castka;
+        // validace vstupu pred zmenou stavu
+    }
+}
+\end{lstlisting}
+
+\paragraph{3. Dědičnost (Inheritance)}
+Mechanismus, který umožňuje nové třídě přebírat vlastnosti a metody existující (nadřazené) třídy.
+\begin{itemize}
+  \item Klíčové slovo \texttt{extends} (třída) nebo \texttt{implements} (rozhraní)
+  \item Java podporuje jednoduchou dědičnost tříd, ale vícenásobnou implementaci rozhraní
+  \item \texttt{super} -- odkaz na nadřazenou třídu
+  \item \textbf{IS-A} vztah (pes IS-A zvíře)
+  \item \textbf{Nevýhody:} těsné propojení (coupling) tříd; změna v rodičovské třídě může rozbít potomky
+\end{itemize}
+
+\paragraph{4. Polymorfismus (Polymorphism)}
+Schopnost různých objektů reagovat různým způsobem na stejné zprávy (volání metod).
+\begin{itemize}
+  \item \textbf{Compile-time polymorfismus} -- přetížení metod (method overloading); stejný název metody,
+    různé parametry
+  \item \textbf{Runtime polymorfismus} -- přepsání metody (method overriding); podtřída překryje metodu
+    nadtřídy; rozhodnutí za běhu programu
+  \item \textbf{Liskovův substituční princip (LSP):} objekty podtřídy musejí být zaměnitelné za objekty nadtřídy
+\end{itemize}
+
+\begin{lstlisting}[language=Java, caption=Polymorfismus v Javě]
+abstract class Zvire {
+    abstract void vydejZvuk();
+}
+
+class Pes extends Zvire {
+    @Override
+    public void vydejZvuk() { System.out.println("Haf!"); }
+}
+
+class Kocka extends Zvire {
+    @Override
+    public void vydejZvuk() { System.out.println("Mnau!"); }
+}
+
+// Runtime polymorfismus
+Zvire z = new Pes();
+z.vydejZvuk(); // vypise "Haf!" -- rozhodnutí za běhu
+\end{lstlisting}
+
+\subsubsection{Třída vs. instance}
+
+\begin{itemize}
+  \item \textbf{Třída (Class)} -- šablona/plán; definuje strukturu a chování; na disku jako \texttt{.class} soubor
+  \item \textbf{Instance (Object)} -- konkrétní výskyt třídy vytvořený v paměti pomocí \texttt{new}
+  \item \textbf{Konstruktor} -- speciální metoda volaná při vytváření instance; stejný název jako třída, bez návratového typu
+\end{itemize}
+
+\subsubsection{Abstraktní třídy vs. rozhraní}
+
+\paragraph{Co je abstraktní třída?}
+\textbf{Abstraktní třída} je třída, od které \textbf{nelze přímo vytvořit instanci} (\texttt{new} nad ní selže).
+Slouží jako \textbf{neúplná šablona} -- definuje společné chování potomků, ale části nechává k implementaci v podtřídách.
+Používá se, když třídy sdílejí \textbf{implementační kód} i \textbf{stav} (atributy).
+
+\begin{lstlisting}[language=Java, caption=Abstraktní třída]
+abstract class Vozidlo {
+    protected String znacka;     // sdílený stav
+    protected int rokVyroby;
+
+    public Vozidlo(String znacka, int rok) {
+        this.znacka = znacka;
+        this.rokVyroby = rok;
+    }
+
+    // Konkrétní metoda -- sdílena všemi potomky
+    public int stariVozu() {
+        return 2024 - rokVyroby;
+    }
+
+    // Abstraktní metoda -- každý potomek musí implementovat
+    public abstract String typPaliva();
+}
+
+class Auto extends Vozidlo {
+    public Auto(String znacka, int rok) { super(znacka, rok); }
+    @Override public String typPaliva() { return "Benzin/nafta/elektro"; }
+}
+\end{lstlisting}
+
+\paragraph{Co je rozhraní (interface)?}
+\textbf{Rozhraní} je \textbf{čistý kontrakt} -- říká ``tato třída UMĚT dělat X'', ale vůbec neříká jak.
+Neobsahuje stav (žádné instanční proměnné). Třída může implementovat \textbf{libovolný počet} rozhraní.
+Používá se pro definování schopností nezávislých na hierarchii tříd.
+
+\begin{lstlisting}[language=Java, caption=Rozhraní]
+interface Elektricke {
+    void nabijBaterii();
+    int getKapacitaBaterie();  // kWh
+}
+
+interface GPS {
+    double getSirka();
+    double getDelka();
+}
+
+// Třída může implementovat více rozhraní zároveň
+class ElektrickeAuto extends Auto implements Elektricke, GPS {
+    private int kapacita;
+    private double lat, lon;
+
+    @Override public void nabijBaterii() { /* ... */ }
+    @Override public int getKapacitaBaterie() { return kapacita; }
+    @Override public double getSirka() { return lat; }
+    @Override public double getDelka() { return lon; }
+}
+\end{lstlisting}
+
+\paragraph{Kdy použít co?}
+
+\begin{center}
+\begin{tabular}{p{5.5cm}p{5.5cm}}
+\toprule
+\textbf{Abstraktní třída} & \textbf{Rozhraní} \\
+\midrule
+Třídy \textbf{jsou} stejným typem (IS-A): \newline
+\texttt{Pes} IS-A \texttt{Zvire} &
+Třídy \textbf{umí} totéž (CAN-DO): \newline
+\texttt{Auto} CAN-DO \texttt{Serializable} \\
+\midrule
+Sdílí \textbf{kód} i \textbf{stav} (atributy) &
+Definují pouze \textbf{kontrakt} (co umí) \\
+\midrule
+Potřebujeme \textbf{konstruktor} nebo \textbf{protected} pole &
+Přidáváme schopnosti \textbf{napříč hierarchiemi} \\
+\midrule
+Pouze \textbf{jedna} abstraktní třída &
+\textbf{Více} rozhraní najednou \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Principy SOLID}
+
+\begin{itemize}
+  \item \textbf{S} -- Single Responsibility Principle: třída má mít pouze jeden důvod ke změně
+  \item \textbf{O} -- Open/Closed Principle: otevřena pro rozšíření, uzavřena pro modifikaci
+  \item \textbf{L} -- Liskov Substitution Principle: podtřídy jsou zaměnitelné za nadtřídy
+  \item \textbf{I} -- Interface Segregation Principle: raději více specifických rozhraní
+  \item \textbf{D} -- Dependency Inversion Principle: závislost na abstrakcích, ne na konkrétních implementacích
+\end{itemize}
+
+%=============================================================================
+\subsection{Test Driven Development (TDD)}
+%=============================================================================
+
+\subsubsection{Principy TDD}
+
+\textbf{TDD} je vývojová metodika, při níž se testy píší \textbf{před} samotným produkčním kódem.
+Cyklus TDD: \textbf{Red -- Green -- Refactor}
+
+\begin{enumerate}
+  \item \textbf{Red} -- napsat test, který selže (testuje chování, které ještě neexistuje)
+  \item \textbf{Green} -- napsat minimální kód tak, aby test prošel
+  \item \textbf{Refactor} -- vylepšit kód bez změny chování (testy stále musí procházet)
+\end{enumerate}
+
+\subsubsection{Typy testů}
+
+\begin{itemize}
+  \item \textbf{Unit testy} -- testují izolovanou jednotku (třídu, metodu); mock objekty pro závislosti
+  \item \textbf{Integrační testy} -- testují spolupráci více komponent (např. DB + služba)
+  \item \textbf{End-to-end (E2E) testy} -- testují celý systém z pohledu uživatele
+\end{itemize}
+
+\textbf{Testovací pyramida:} mnoho unit testů, méně integračních, nejméně E2E.
+
+\subsubsection{JUnit 5 v Javě}
+
+\begin{lstlisting}[language=Java, caption=Unit test s JUnit 5]
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class KalkulackaTest {
+    private Kalkulacka calc;
+
+    @BeforeEach
+    void setUp() {
+        calc = new Kalkulacka();
+    }
+
+    @Test
+    void testScitani() {
+        assertEquals(5, calc.secti(2, 3));
+    }
+
+    @Test
+    void testDeleniNulou() {
+        assertThrows(ArithmeticException.class,
+            () -> calc.vydel(10, 0));
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Mockování závislostí}
+
+Mock objekty simulují chování závislostí (DB, externích API) při unit testech.
+Knihovna \textbf{Mockito} v Javě:
+\begin{lstlisting}[language=Java, caption=Mockování s Mockito]
+@Mock
+private UzivatelskyRepository repo;
+
+@Test
+void testNajdiUzivatele() {
+    when(repo.findById(1L))
+        .thenReturn(Optional.of(new Uzivatel("Jan")));
+    Uzivatel u = service.najdi(1L);
+    assertEquals("Jan", u.getJmeno());
+    verify(repo).findById(1L);
+}
+\end{lstlisting}
+
+%=============================================================================
+\subsection{Lambda výrazy a Stream API}
+%=============================================================================
+
+\subsubsection{Funkcionální rozhraní a lambda výrazy}
+
+\textbf{Lambda výraz} je anonymní funkce -- blok kódu, který lze předat jako argument nebo uložit do proměnné.
+Zavedeny v Javě 8. Syntaxe: \texttt{(parametry) -> \{tělo\}}
+
+\textbf{Funkcionální rozhraní} -- rozhraní s právě jednou abstraktní metodou (označuje se \texttt{@FunctionalInterface}).
+
+Zabudovaná funkcionální rozhraní v Javě:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Rozhraní} & \textbf{Signatura} & \textbf{Použití} \\
+\midrule
+\texttt{Function<T,R>} & \texttt{R apply(T t)} & Transformace hodnoty \\
+\texttt{Predicate<T>} & \texttt{boolean test(T t)} & Filtrování \\
+\texttt{Consumer<T>} & \texttt{void accept(T t)} & Spotřebování hodnoty \\
+\texttt{Supplier<T>} & \texttt{T get()} & Produkce hodnoty \\
+\texttt{BiFunction<T,U,R>} & \texttt{R apply(T t, U u)} & Transformace dvou hodnot \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption=Lambda výrazy]
+// Starý způsob - anonymní třída
+Comparator<String> comp1 = new Comparator<String>() {
+    public int compare(String a, String b) {
+        return a.compareTo(b);
+    }
+};
+
+// Lambda výraz
+Comparator<String> comp2 = (a, b) -> a.compareTo(b);
+
+// Method reference
+Comparator<String> comp3 = String::compareTo;
+\end{lstlisting}
+
+\subsubsection{Stream API}
+
+\textbf{Stream} je \textit{pipeline} pro zpracování kolekce dat funkcionálním stylem -- místo imperativního cyklu \texttt{for} popisujeme, co chceme s daty udělat jako řetěz operací.
+
+\textbf{Klíčové vlastnosti:}
+\begin{itemize}
+  \item \textbf{Lazy evaluation} -- intermediární operace se \textit{nevyhodnocují} dokud nepřijde terminální operace; umožňuje optimalizace (zkratové vyhodnocení, sloučení operací)
+  \item \textbf{Spotřeba} -- stream lze projít pouze jednou; po terminální operaci je ``vyčerpaný''
+  \item \textbf{Nemodifikuje zdroj} -- operace nevytváří vedlejší efekty na původní kolekci
+  \item \textbf{Paralelizovatelný} -- \texttt{parallelStream()} automaticky rozdělí práci mezi vlákna (Fork/Join pool)
+\end{itemize}
+
+\paragraph{Operace na streamech}
+\begin{itemize}
+  \item \textbf{Intermediární (lazy)} -- vracejí nový stream: \texttt{filter()}, \texttt{map()}, \texttt{flatMap()},
+    \texttt{sorted()}, \texttt{distinct()}, \texttt{limit()}, \texttt{peek()}
+  \item \textbf{Terminální (eager)} -- vrátí výsledek nebo vedlejší efekt: \texttt{collect()}, \texttt{forEach()},
+    \texttt{reduce()}, \texttt{count()}, \texttt{findFirst()}, \texttt{anyMatch()}, \texttt{allMatch()}
+\end{itemize}
+
+\begin{lstlisting}[language=Java, caption=Stream API příklady]
+List<String> jmena = Arrays.asList("Alice", "Bob", "Charlie", "David");
+
+// Filtrování a transformace
+List<String> vysledek = jmena.stream()
+    .filter(j -> j.length() > 3)      // Alice, Charlie, David
+    .map(String::toUpperCase)          // ALICE, CHARLIE, DAVID
+    .sorted()                          // řazení
+    .collect(Collectors.toList());
+
+// Redukce
+int soucet = IntStream.rangeClosed(1, 10)
+    .reduce(0, Integer::sum);   // 55
+
+// Seskupení
+Map<Integer, List<String>> podleDlky = jmena.stream()
+    .collect(Collectors.groupingBy(String::length));
+
+// Paralelní stream (pro velká data)
+long pocet = jmena.parallelStream()
+    .filter(j -> j.startsWith("A"))
+    .count();
+\end{lstlisting}
+
+\paragraph{Srovnání Java Stream API s C\# LINQ}
+
+Pokud znáte .NET, Stream API je ekvivalentem \textbf{LINQ} (Language Integrated Query).
+Koncepty jsou totožné, liší se pouze syntaxí:
+
+\begin{lstlisting}[language=Java, caption=Java Stream API vs. C\# LINQ -- srovnání]
+// === JAVA (Stream API) ===
+List<String> jmena = List.of("Alice", "Bob", "Charlie", "David");
+
+List<String> vysledek = jmena.stream()
+    .filter(j -> j.length() > 3)    // jako Where() v C#
+    .map(String::toUpperCase)        // jako Select() v C#
+    .sorted()
+    .collect(Collectors.toList());   // jako ToList() v C#
+
+// Průměrný věk dospělých
+double prumer = osoby.stream()
+    .filter(o -> o.getVek() >= 18)
+    .mapToInt(Osoba::getVek)         // speciální IntStream pro int
+    .average()
+    .orElse(0.0);
+
+// === C# LINQ (ekvivalent) ===
+// var vysledek = jmena
+//     .Where(j => j.Length > 3)
+//     .Select(j => j.ToUpper())
+//     .OrderBy(j => j)
+//     .ToList();
+//
+// double prumer = osoby
+//     .Where(o => o.Vek >= 18)
+//     .Average(o => o.Vek);
+\end{lstlisting}
+
+\textbf{Hlavní rozdíly Java Stream vs. C\# LINQ:}
+\begin{itemize}
+  \item V Javě je \texttt{stream()} explicitní volání; v C\# je LINQ přímo na \texttt{IEnumerable<T>}
+  \item Java rozlišuje \texttt{Stream<T>}, \texttt{IntStream}, \texttt{LongStream}, \texttt{DoubleStream} (kvůli boxing); C\# to řeší automaticky
+  \item Terminální operace Javy: \texttt{collect(Collectors.toList())}; v C\# jednoduše \texttt{.ToList()}
+  \item Obě platformy podporují paralelní zpracování: Java \texttt{parallelStream()}, C\# \texttt{AsParallel()} (PLINQ)
+\end{itemize}
+
+\subsubsection{Optional}
+
+\texttt{Optional<T>} je kontejner pro hodnotu, která může být null -- eliminuje \texttt{NullPointerException}.
+
+\begin{lstlisting}[language=Java, caption=Optional v Javě]
+Optional<String> opt = Optional.ofNullable(getJmeno());
+
+// Bezpečná práce s hodnotou
+String jmeno = opt.orElse("Neznámý");
+opt.ifPresent(j -> System.out.println("Ahoj, " + j));
+String velke = opt.map(String::toUpperCase).orElse("");
+\end{lstlisting}
+
+\begin{profesorbox}[Otázky profesorů k tématu: Programování v Javě]
+\textbf{Komise: Svátek, Chlapek, Zbořil}
+\begin{itemize}
+  \item Vysvětlete principy OOP -- abstrakce, zapouzdření, dědičnost, polymorfismus.
+  \item Jaký je rozdíl mezi abstraktní třídou a rozhraním?
+\end{itemize}
+\textbf{Vojíř Stanislav, Ing., Ph.D.}
+\begin{itemize}
+  \item Co je TDD a jaký je jeho postup?
+  \item Jak byste testoval metodu, která závisí na externím API?
+\end{itemize}
+\textbf{Chudán David, Ing., Ph.D.}
+\begin{itemize}
+  \item Co jsou lambda výrazy a jaké přinášejí výhody?
+  \item Vysvětlete rozdíl mezi \texttt{map()} a \texttt{flatMap()} v Stream API.
+\end{itemize}
+\textbf{Sládek Pavel, Ing., Ph.D.}
+\begin{itemize}
+  \item Jaké jsou principy SOLID a proč jsou důležité?
+  \item Co je polymorfismus a jak se projevuje v Javě?
+\end{itemize}
+\textbf{Zeman Václav, Ing., Ph.D.}
+\begin{itemize}
+  \item Jak se v Javě zajišťuje zapouzdření? Jaká jsou pravidla pro modifikátory přístupu?
+  \item Proč je dědičnost považována za nebezpečnou a jaká je alternativa?
+\end{itemize}
+\end{profesorbox}

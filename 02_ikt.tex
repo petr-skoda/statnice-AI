@@ -1,0 +1,351 @@
+%=============================================================================
+\section{Informační a komunikační technologie (IKT)}
+%=============================================================================
+
+\subsection{Síťové protokoly -- IP, TCP, UDP, ICMP}
+
+\subsubsection{Model TCP/IP a ISO/OSI}
+
+Síťová komunikace je popsána vrstvovými modely. \textbf{ISO/OSI} má 7 vrstev (fyzická, linková, síťová,
+transportní, relační, prezentační, aplikační). \textbf{TCP/IP} má 4 vrstvy:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{TCP/IP vrstva} & \textbf{Funkce} & \textbf{Protokoly} \\
+\midrule
+Aplikační & Síťové aplikace & HTTP, FTP, SMTP, DNS, SSH \\
+Transportní & Přenos dat end-to-end & TCP, UDP \\
+Síťová (Internet) & Adresování a směrování & IP, ICMP, ARP \\
+Přístup k síti & Fyzický přenos & Ethernet, Wi-Fi \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{IP (Internet Protocol)}
+
+IP je základní protokol síťové vrstvy zajišťující směrování paketů.
+
+\paragraph{IPv4}
+\begin{itemize}
+  \item 32-bitová adresa (4 oktety, např. 192.168.1.1)
+  \item Třídy adres A, B, C, D (multicast), E (rezervováno)
+  \item Privátní adresy: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+  \item \textbf{Přidělování adres:} statické nebo DHCP (Dynamic Host Configuration Protocol)
+  \item \textbf{NAT} (Network Address Translation) -- překlad privátních adres na veřejné; řeší nedostatek adres
+\end{itemize}
+
+\paragraph{IPv6}
+\begin{itemize}
+  \item 128-bitová adresa (8 skupin po 4 hex číslicích, např. 2001:0db8:85a3::8a2e:0370:7334)
+  \item $2^{128}$ adres -- řeší problém nedostatku adres
+  \item Automatická konfigurace (SLAAC), vestavěný IPsec
+  \item Záhlaví zjednodušeno oproti IPv4
+\end{itemize}
+
+\subsubsection{TCP (Transmission Control Protocol)}
+
+TCP je spolehlivý, spojovaný protokol transportní vrstvy. Garantuje doručení dat ve správném pořadí.
+
+\paragraph{Navázání spojení -- 3-Way Handshake}
+\begin{enumerate}
+  \item \textbf{SYN} -- klient pošle segment s příznakem SYN a náhodným sekvenčním číslem (ISN)
+  \item \textbf{SYN-ACK} -- server potvrdí (ACK = ISN+1) a pošle vlastní SYN se svým ISN
+  \item \textbf{ACK} -- klient potvrdí serverovo ISN (ACK = serverISN+1); spojení navázáno
+\end{enumerate}
+
+\paragraph{Ukončení spojení -- 4-Way Termination}
+\begin{enumerate}
+  \item Klient $\to$ FIN
+  \item Server $\to$ ACK
+  \item Server $\to$ FIN
+  \item Klient $\to$ ACK
+\end{enumerate}
+
+\paragraph{Vlastnosti TCP}
+\begin{itemize}
+  \item \textbf{Spolehlivost} -- potvrzování (ACK), opakování ztracených segmentů
+  \item \textbf{Řízení toku} -- sliding window; zabraňuje zahlcení příjemce
+  \item \textbf{Řízení přetížení} -- slow start, congestion avoidance; zabraňuje zahlcení sítě
+  \item \textbf{Multiplexování} -- portová čísla (0--65535); dobře známé porty 0--1023
+\end{itemize}
+
+\subsubsection{UDP (User Datagram Protocol)}
+
+UDP je nespolehlivý, nespojovaný protokol. Nezaručuje doručení ani pořadí paketů.
+Vhodný tam, kde je rychlost důležitější než spolehlivost:
+\begin{itemize}
+  \item Streamování videa/audia (ztráta paketu = jen výpadek obrazu)
+  \item DNS dotazy (rychlé, krátké)
+  \item Online hry
+  \item VoIP
+\end{itemize}
+
+\subsubsection{ICMP (Internet Control Message Protocol)}
+
+ICMP je protokol síťové vrstvy pro zasílání chybových zpráv a diagnostiku sítě.
+\begin{itemize}
+  \item \textbf{ping} -- testuje dosažitelnost hosta (ICMP Echo Request/Reply)
+  \item \textbf{traceroute} -- sleduje cestu paketu přes síť (TTL expiry zprávy)
+  \item Chybové zprávy: Destination Unreachable, Time Exceeded, Redirect
+\end{itemize}
+
+\subsubsection{DNS (Domain Name System)}
+
+DNS překládá doménová jména na IP adresy (a zpět -- reverzní DNS).
+
+\paragraph{Hierarchická struktura DNS}
+\begin{itemize}
+  \item \textbf{Root DNS} -- kořenové servery (13 skupin, označeny A--M)
+  \item \textbf{TLD (Top Level Domain)} -- .cz, .com, .org, .net, .edu
+  \item \textbf{Autoritativní DNS server} -- zná záznamy pro danou doménu
+  \item \textbf{Rekurzivní resolver} -- ptá se jménem klienta (typicky DNS poskytovatele)
+\end{itemize}
+
+\paragraph{Typy DNS záznamů}
+\begin{itemize}
+  \item \textbf{A} -- doménové jméno $\to$ IPv4 adresa
+  \item \textbf{AAAA} -- doménové jméno $\to$ IPv6 adresa
+  \item \textbf{CNAME} -- alias pro jiné jméno
+  \item \textbf{MX} -- poštovní server pro doménu
+  \item \textbf{NS} -- autoritativní name server
+  \item \textbf{PTR} -- reverzní lookup (IP $\to$ jméno)
+  \item \textbf{TXT} -- textové záznamy (SPF, DKIM pro e-mail)
+\end{itemize}
+
+\paragraph{DNS resoluce}
+\begin{enumerate}
+  \item Klient $\to$ lokální cache / hosts soubor
+  \item Klient $\to$ rekurzivní resolver (ISP)
+  \item Resolver $\to$ root server (odkaz na TLD server)
+  \item Resolver $\to$ TLD server (odkaz na autoritativní server)
+  \item Resolver $\to$ autoritativní server (IP adresa)
+  \item Resolver $\to$ klient (odpověď s IP)
+\end{enumerate}
+
+\paragraph{DNS Cache Poisoning a DNSSEC}
+\begin{itemize}
+  \item \textbf{DNS Cache Poisoning} -- útočník vloží falešný záznam do cache resolveru; oběti
+    jsou přesměrovány na podvodné stránky (pharming)
+  \item \textbf{DNSSEC (DNS Security Extensions)} -- digitálně podepisuje DNS záznamy;
+    resolver ověří podpis autoritativního serveru; brání cache poisoningu
+  \item DNSSEC přidává záznamy: RRSIG (podpis), DNSKEY (veřejný klíč), DS (delegation signer)
+\end{itemize}
+
+%=============================================================================
+\subsection{Aplikační protokoly -- SSH, E-mail, WWW}
+%=============================================================================
+
+\subsubsection{SSH (Secure Shell)}
+
+SSH je kryptografický síťový protokol pro bezpečný vzdálený přístup a přenos dat. Port 22.
+
+\paragraph{Funkce SSH}
+\begin{itemize}
+  \item \textbf{Vzdálené přihlášení} -- bezpečná náhrada za telnet a rlogin
+  \item \textbf{SCP/SFTP} -- bezpečný přenos souborů
+  \item \textbf{Port forwarding (tunelování)} -- přesměrování TCP portů přes šifrovaný kanál
+  \item \textbf{X11 forwarding} -- vzdálené spouštění grafických aplikací
+\end{itemize}
+
+\paragraph{Autentizace v SSH}
+\begin{itemize}
+  \item \textbf{Heslem} -- nejjednodušší, náchylné na brute-force
+  \item \textbf{Veřejným klíčem} -- asymetrická kryptografie; klient má privátní klíč, server veřejný
+  \item \textbf{Certifikátem} -- vydán certifikační autoritou
+\end{itemize}
+
+\subsubsection{Architektura e-mailové komunikace}
+
+Přenos e-mailu zahrnuje tři typy komponent:
+
+\begin{itemize}
+  \item \textbf{MUA (Mail User Agent)} -- poštovní klient (Outlook, Thunderbird, Gmail webové rozhraní);
+    uživatel pomocí MUA píše a čte e-maily
+  \item \textbf{MTA (Mail Transfer Agent)} -- poštovní server zajišťující přenos zpráv mezi servery
+    (Postfix, Sendmail, Exchange); přijímá od MUA a směruje k cílovému MTA
+  \item \textbf{MDA (Mail Delivery Agent)} -- doručí zprávu do schránky příjemce na serveru;
+    MUA si zprávu stáhne přes POP3 nebo IMAP
+\end{itemize}
+
+Tok zprávy: MUA (odesílatel) $\to$ MTA (odchozí) $\xrightarrow{\text{SMTP}}$ MTA (příchozí) $\to$ MDA $\to$ schránka $\xrightarrow{\text{POP3/IMAP}}$ MUA (příjemce).
+
+\subsubsection{E-mail -- SMTP, POP3, IMAP}
+
+\paragraph{SMTP (Simple Mail Transfer Protocol)}
+\begin{itemize}
+  \item Port 25 (server-to-server), 587 (klient-server s autentizací), 465 (SMTPS)
+  \item Zajišťuje \textbf{odesílání} e-mailů z klienta na server a přenos mezi servery
+  \item Příkazy: EHLO, MAIL FROM, RCPT TO, DATA, QUIT
+\end{itemize}
+
+\paragraph{POP3 (Post Office Protocol 3)}
+\begin{itemize}
+  \item Port 110 (nešifrovaný), 995 (POP3S)
+  \item Stahuje e-maily ze serveru \textbf{do lokálního klienta} a standardně je ze serveru maže
+  \item Vhodné pro jeden zařízení, offline přístup
+\end{itemize}
+
+\paragraph{IMAP (Internet Message Access Protocol)}
+\begin{itemize}
+  \item Port 143 (nešifrovaný), 993 (IMAPS)
+  \item E-maily zůstávají na serveru; klient pracuje s e-maily online
+  \item Synchronizace stavu (přečteno, označeno) napříč zařízeními
+  \item Vhodné pro přístup z více zařízení (preferované)
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Vlastnost} & \textbf{POP3} & \textbf{IMAP} \\
+\midrule
+Uložení zpráv & Lokálně & Na serveru \\
+Více zařízení & Komplikované & Podporováno nativně \\
+Synchronizace & Žádná & Plná \\
+Offline přístup & Ano & Možný (s cachingem) \\
+Nároky na server & Nízké & Vyšší \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Zabezpečení e-mailu}
+
+\begin{itemize}
+  \item \textbf{SPF (Sender Policy Framework)} -- TXT DNS záznam; definuje povolené odesílající IP servery
+  \item \textbf{DKIM (DomainKeys Identified Mail)} -- digitální podpis e-mailu klíčem domény
+  \item \textbf{DMARC} -- politika kombinující SPF a DKIM; určuje akci při selhání (none, quarantine, reject)
+  \item \textbf{S/MIME, PGP} -- end-to-end šifrování obsahu e-mailu
+\end{itemize}
+
+%=============================================================================
+\subsection{Webové technologie -- HTTP, cookies, session}
+%=============================================================================
+
+\subsubsection{HTTP (Hypertext Transfer Protocol)}
+
+HTTP je aplikační protokol pro přenos hypertextových dokumentů. Základ webu. Port 80 (HTTP), 443 (HTTPS).
+
+\paragraph{HTTP metody}
+\begin{itemize}
+  \item \textbf{GET} -- získání zdroje; bez těla; idempotentní; lze cachovat
+  \item \textbf{POST} -- odeslání dat na server (vytvoření záznamu); má tělo; není idempotentní
+  \item \textbf{PUT} -- vytvoření nebo nahrazení zdroje; idempotentní
+  \item \textbf{PATCH} -- částečná aktualizace zdroje
+  \item \textbf{DELETE} -- smazání zdroje; idempotentní
+  \item \textbf{HEAD} -- jako GET, ale bez těla odpovědi
+  \item \textbf{OPTIONS} -- zjištění povolených metod pro daný zdroj
+\end{itemize}
+
+\paragraph{HTTP stavové kódy}
+\begin{itemize}
+  \item \textbf{1xx} -- informační (100 Continue, 101 Switching Protocols)
+  \item \textbf{2xx} -- úspěch (200 OK, 201 Created, 204 No Content)
+  \item \textbf{3xx} -- přesměrování (301 Moved Permanently, 302 Found, 304 Not Modified)
+  \item \textbf{4xx} -- chyba klienta (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found)
+  \item \textbf{5xx} -- chyba serveru (500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable)
+\end{itemize}
+
+\paragraph{HTTP verze}
+\begin{itemize}
+  \item \textbf{HTTP/1.0} -- každý požadavek = nové TCP spojení
+  \item \textbf{HTTP/1.1} -- persistentní spojení (keep-alive), chunked transfer encoding
+  \item \textbf{HTTP/2} -- multiplexing (více požadavků na jednom spojení), header compression (HPACK), server push
+  \item \textbf{HTTP/3} -- postaveno na QUIC (UDP místo TCP); nižší latence
+\end{itemize}
+
+\subsubsection{HTTPS a TLS}
+
+HTTPS = HTTP přes TLS (Transport Layer Security).
+\begin{itemize}
+  \item Zajišťuje: důvěrnost, integritu dat, autentizaci serveru (certifikátem)
+  \item \textbf{TLS handshake:} výměna certifikátů, dohodnutí šifrovacích algoritmů, výměna klíčů
+\end{itemize}
+
+\subsubsection{Cookies}
+
+HTTP cookie je malý kus dat uložený v prohlížeči a odesílaný s každým HTTP požadavkem na daný server.
+
+\paragraph{Vlastnosti cookies}
+\begin{itemize}
+  \item \textbf{Expires/Max-Age} -- expirace; bez nich = session cookie (smazán po zavření prohlížeče)
+  \item \textbf{Secure} -- odesílán pouze přes HTTPS
+  \item \textbf{HttpOnly} -- nepřístupný JavaScriptu (ochrana před XSS)
+  \item \textbf{SameSite} -- ochrana před CSRF (Strict, Lax, None)
+  \item \textbf{Domain/Path} -- omezení platnosti na doménu/cestu
+\end{itemize}
+
+\paragraph{Použití cookies}
+\begin{itemize}
+  \item Správa sezení (session management) -- identifikátor přihlášeného uživatele
+  \item Personalizace -- uložení preferencí uživatele
+  \item Sledování (tracking) -- analýza chování uživatele
+\end{itemize}
+
+\subsubsection{Session (relace)}
+
+HTTP je bezstavový protokol -- každý požadavek je nezávislý. Session řeší udržování stavu:
+\begin{enumerate}
+  \item Po přihlášení server vytvoří session s unikátním ID
+  \item Session ID se uloží do cookie (nebo URL parametru)
+  \item Při každém požadavku se session ID posílá serveru
+  \item Server dohledá session data (uložena v paměti nebo DB)
+\end{enumerate}
+
+\paragraph{Úložiště session dat na serveru}
+\begin{itemize}
+  \item \textbf{Paměť serveru} -- rychlé, ale ztráta při restartu; problém u více serverů (load balancing)
+  \item \textbf{Sdílená cache} -- Redis, Memcached; vhodné pro distribuované systémy
+  \item \textbf{Databáze} -- perzistentní, ale pomalejší
+\end{itemize}
+
+\subsubsection{Client-side vs. Server-side zpracování}
+
+\paragraph{Server-side rendering (SSR)}
+\begin{itemize}
+  \item HTML generováno na serveru (PHP, Java/Spring, Python/Django, ASP.NET)
+  \item Prohlížeč dostane hotové HTML
+  \item \textbf{Výhody:} SEO-friendly, rychlé načtení první stránky, vhodné pro starší prohlížeče
+  \item \textbf{Nevýhody:} vyšší zátěž serveru, pomalejší interakce
+\end{itemize}
+
+\paragraph{Client-side rendering (CSR)}
+\begin{itemize}
+  \item JavaScript stáhne data přes API (REST, GraphQL) a dynamicky vytvoří HTML v prohlížeči
+  \item Frameworky: React, Vue.js, Angular
+  \item \textbf{Výhody:} bohatá interaktivita, nižší zátěž serveru po načtení
+  \item \textbf{Nevýhody:} pomalejší první načtení, složitější SEO
+\end{itemize}
+
+\paragraph{REST API}
+Architekturální styl pro návrh distribuovaných systémů:
+\begin{itemize}
+  \item Bezstavovost (statelessness) -- server neukládá stav klienta
+  \item Identifikace zdrojů přes URI
+  \item Využití HTTP metod sémanticky
+  \item JSON nebo XML jako formát dat
+\end{itemize}
+
+\begin{profesorbox}[Otázky profesorů k tématu: IKT]
+\textbf{Komise: Svátek, Chlapek, Zbořil}
+\begin{itemize}
+  \item Jak funguje překlad doménového jména na IP adresu (DNS)?
+  \item Jaký je rozdíl mezi TCP a UDP?
+\end{itemize}
+\textbf{Zeman Václav, Ing., Ph.D.}
+\begin{itemize}
+  \item Vysvětlete 3-way handshake v TCP.
+  \item Jaký je rozdíl mezi POP3 a IMAP?
+  \item Jak fungují cookies a k čemu slouží?
+\end{itemize}
+\textbf{Chudán David, Ing., Ph.D.}
+\begin{itemize}
+  \item Co je HTTP a jaké jsou jeho hlavní metody?
+  \item Jak probíhá komunikace mezi webovým prohlížečem a serverem?
+  \item Co je session a jak se implementuje v HTTP?
+\end{itemize}
+\textbf{Sedláček Jiří, Ing., Ph.D.}
+\begin{itemize}
+  \item Jaké jsou bezpečnostní mechanismy pro e-mailovou komunikaci?
+  \item Jak SSH zajišťuje autentizaci?
+\end{itemize}
+\end{profesorbox}

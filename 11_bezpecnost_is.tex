@@ -1,0 +1,397 @@
+%=============================================================================
+\section{Bezpečnost informačních systémů}
+%=============================================================================
+
+\subsection{Kryptografie a kryptografická primitiva}
+
+\subsubsection{Základní pojmy}
+
+\begin{itemize}
+  \item \textbf{Kryptologie} = Kryptografie + Kryptoanalýza
+  \item \textbf{Kryptografie} -- věda zabývající se důvěrností komunikace přes nezabezpečený kanál;
+    způsoby, jak zašifrovat odesílaná data, aby jim nepovolaná osoba neporozuměla
+  \item \textbf{Kryptoanalýza} -- zabývá se slabinami šifrovacích systémů; způsoby dešifrování bez znalosti klíčů
+\end{itemize}
+
+\paragraph{Cíle kryptografie}
+\begin{itemize}
+  \item \textbf{Důvěrnost (Confidentiality)} -- obsah zprávy znají pouze oprávněné strany; šifrování
+  \item \textbf{Autentizace (Authentication)} -- ověření identity; digitální podpis, certifikát
+  \item \textbf{Integrita (Integrity)} -- zpráva nebyla po cestě změněna; hash, MAC, digitální podpis
+  \item \textbf{Neodmítnutelnost (Non-repudiation)} -- odesílatel nemůže popřít odeslání; digitální podpis
+\end{itemize}
+
+\subsubsection{Kryptografická primitiva}
+
+Algoritmy se základními kryptografickými vlastnostmi, ze kterých se skládají kryptografické protokoly:
+
+\begin{itemize}
+  \item \textbf{Bez klíče:} náhodná čísla, hašovací funkce
+  \item \textbf{Se sdíleným klíčem:} symetrické šifry (blokové, proudové), MAC
+  \item \textbf{S veřejným klíčem:} digitální podpisy, šifrování s veřejným klíčem, výměna klíčů (KEX)
+\end{itemize}
+
+\subsubsection{Symetrická kryptografie}
+
+Stejný klíč pro šifrování i dešifrování. Rychlá, vhodná pro velká data.
+
+\paragraph{Proudové šifry (Stream Ciphers)}
+\begin{itemize}
+  \item Generátor proudu bitů; XOR s otevřeným textem $\to$ šifrovaný text
+  \item Klíč se nesmí opakovat (každá zpráva musí mít nový klíč)
+  \item \textbf{Vernamova šifra (One Time Pad)} -- klíč stejně dlouhý jako zpráva; teoreticky perfektní
+  \item Příklady: Salsa, RC4 (zastaralý)
+\end{itemize}
+
+\paragraph{Blokové šifry (Block Ciphers)}
+\begin{itemize}
+  \item Otevřený text se rozdělí do bloků $n$ bitů, každý blok se šifruje samostatně
+  \item Substitučně-permutační síť; rundy
+  \item \textbf{DES} -- 70. léta; 56-bit klíč, 64-bit blok; prolomeno v roce 2000 (zastaralý)
+  \item \textbf{AES (Advanced Encryption Standard)} -- nástupce DES; 128-bit blok; klíč 128/192/256 bitů; 10 rund; standard
+\end{itemize}
+
+\paragraph{Módy blokových šifer}
+\begin{itemize}
+  \item \textbf{ECB (Electronic Codebook)} -- každý blok šifrován nezávisle; \textbf{nepoužívat} -- vzory v šifrovaném textu
+  \item \textbf{CBC (Cipher Block Chaining)} -- XOR s předchozím šifrovaným blokem + IV; dlouho populární, ale má bezpečnostní slabiny
+  \item \textbf{CTR (Counter Mode)} -- z blokové šifry vytvoří proudovou; bloky šifrovatelné paralelně; základ CTR\_DRBG
+  \item \textbf{GCM (Galois/Counter Mode)} -- CTR + MAC (AEAD); aktuálně preferovaný mód; SSL/TLS 1.3
+    \begin{itemize}
+      \item \textbf{MAC (Message Authentication Code)} -- kryptografický otisk zprávy vytvořený
+        se sdíleným klíčem; ověřuje zároveň \textit{integritu} (zpráva nebyla změněna)
+        i \textit{autentizaci} (zprávu vytvořil někdo se správným klíčem).
+        Na rozdíl od prostého hashe útočník bez klíče MAC nezfalšuje.
+        V GCM se MAC počítá přes Galoisovo tělové násobení $\to$ výsledkem je
+        \textbf{authentication tag} (obvykle 128 bitů) přiložený k šifrovanému textu.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Inicializační vektor (IV)} -- náhodná hodnota kombinovaná s prvním blokem; zabrání útokům opakováním.
+
+\subsubsection{Asymetrická kryptografie}
+
+Dva matematicky svázané klíče: \textbf{veřejný (public key)} a \textbf{soukromý (private key)}.
+Veřejný klíč lze sdílet; soukromý musí zůstat tajný.
+
+\paragraph{Typy algoritmů}
+\begin{itemize}
+  \item \textbf{RSA} -- faktorizace velkých čísel ($n = p \cdot q$); klíče 2048+ bitů
+  \item \textbf{Diffie-Hellman (DH)} -- diskrétní logaritmus; výměna klíčů bez přenosu tajemství
+  \item \textbf{Eliptické křivky (EC)} -- ECDH, ECDSA, Ed25519; kratší klíče, stejná bezpečnost jako RSA
+\end{itemize}
+
+\paragraph{Diffie-Hellman výměna klíčů}
+\begin{enumerate}
+  \item Dohodnou se na veřejných číslech $p$ (prvočíslo) a $g$ (generátor)
+  \item Alice zvolí soukromé $a$, spočítá $A = g^a \mod p$ a pošle Bobovi
+  \item Bob zvolí soukromé $b$, spočítá $B = g^b \mod p$ a pošle Alici
+  \item Sdílené tajemství: $A^b \mod p = B^a \mod p = g^{ab} \mod p$
+\end{enumerate}
+Odposlechem lze získat $A$ a $B$, ale výpočet $a$ nebo $b$ je prakticky nemožný (diskrétní logaritmus).
+
+\paragraph{Limitace asymetrické kryptografie}
+\begin{itemize}
+  \item Pomalejší než symetrická (složité matematické operace)
+  \item Omezená délka zprávy, kterou lze přímo zašifrovat
+  \item V praxi: asymetrická kryptografie pro výměnu klíčů $\to$ symetrická pro data (TLS, PGP)
+\end{itemize}
+
+%=============================================================================
+\subsection{Hash, MAC, Digitální podpis}
+%=============================================================================
+
+\subsubsection{Hašovací funkce (Hash)}
+
+\begin{itemize}
+  \item \textbf{Fixní délka výstupu} -- nezávisle na délce vstupu (SHA-256 $\to$ 256 bitů)
+  \item \textbf{Jednosměrná} -- nelze z hashe rekonstruovat vstup
+  \item \textbf{Deterministická} -- stejný vstup $\to$ vždy stejný hash
+  \item \textbf{Lavinový efekt} -- malá změna vstupu $\to$ zcela jiný hash
+  \item Algoritmy: SHA-256, SHA-3, bcrypt (pro hesla), argon2 (pro hesla)
+\end{itemize}
+
+Hash zajišťuje pouze integritu, ne autentizaci ani neodmítnutelnost.
+
+\subsubsection{MAC (Message Authentication Code)}
+
+\begin{itemize}
+  \item Ověří, že zpráva byla vygenerována někým, kdo zná sdílený klíč (symetrická autentizace)
+  \item Zajišťuje integritu \textbf{i} autentizaci původu
+  \item Nejčastěji v cookies: Login + heslo $\to$ cookie s MAC; server ověří při každém požadavku
+  \item \textbf{HMAC} -- Hash-based MAC; $HMAC(k, m) = H((k \oplus \text{opad}) \| H((k \oplus \text{ipad}) \| m))$
+\end{itemize}
+
+\subsubsection{AEAD -- Authenticated Encryption with Associated Data}
+
+Současné šifrování i výpočet MAC -- efektivnější než kombinace šifra + MAC:
+\begin{itemize}
+  \item \textbf{MAC-then-Encrypt} -- SSL/TLS $<$ 1.3; zranitelný na padding oracle
+  \item \textbf{Encrypt-then-MAC} -- IPsec, SSH; bezpečnější
+  \item \textbf{Encrypt-and-MAC} -- SSH; zranitelný (MAC odhaluje info o plaintextu)
+  \item \textbf{GCM mode} -- AES-GCM je AEAD; nejbezpečnější přístup
+\end{itemize}
+
+\subsubsection{Digitální podpis}
+
+Asymetrický ekvivalent MAC -- zajišťuje autentizaci \textbf{i} neodmítnutelnost.
+
+\paragraph{Princip}
+\begin{enumerate}
+  \item Z textu se vytvoří hash
+  \item Hash se zašifruje \textbf{soukromým klíčem} odesílatele $\to$ digitální podpis
+  \item Příjemce dešifruje podpis \textbf{veřejným klíčem} odesílatele $\to$ původní hash
+  \item Příjemce spočítá hash z přijatého textu a porovná -- shoda = integrita + autentizace
+\end{enumerate}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{Primitiv} & \textbf{Integrita} & \textbf{Autentizace} & \textbf{Neodmítnutelnost} \\
+\midrule
+Hash & Ano & Ne & Ne \\
+MAC & Ano & Ano & Ne \\
+Digitální podpis & Ano & Ano & Ano \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%=============================================================================
+\subsection{Certifikáty, eIDAS}
+%=============================================================================
+
+\subsubsection{Digitální certifikát}
+
+Certifikát je datová struktura obsahující:
+\begin{itemize}
+  \item Identifikační údaje (CN, O, OU, C)
+  \item Platnost certifikátu (od -- do)
+  \item Veřejný klíč
+  \item Rozšiřující údaje (SAN, Key Usage)
+  \item Digitální podpis certifikační autority (CA)
+\end{itemize}
+
+\paragraph{Infrastruktura veřejných klíčů (PKI)}
+\begin{itemize}
+  \item \textbf{CA (Certification Authority)} -- vydává a podepisuje certifikáty; ověřuje žadatele
+  \item \textbf{RA (Registration Authority)} -- ověřování identity žadatelů pro CA
+  \item \textbf{Řetězec důvěry} -- Root CA $\to$ Intermediate CA $\to$ koncový certifikát
+  \item \textbf{CRL (Certificate Revocation List)} -- seznam zrušených certifikátů
+  \item \textbf{OCSP} -- online ověření platnosti certifikátu
+\end{itemize}
+
+\subsubsection{eIDAS -- Elektronická identifikace a podpisy}
+
+\textbf{eIDAS} -- nařízení EU č. 910/2014 o elektronické identifikaci a důvěryhodných službách.
+Vztah z hlediska komunikace ``\textbf{osoba -- stát}''.
+
+\paragraph{Typy elektronických podpisů dle eIDAS}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Druh el. podpisu} & \textbf{Kvalita certifikátu} & \textbf{Uložení priv. klíče} \\
+\midrule
+Zaručený el. podpis & Žádný požadavek & Žádný požadavek \\
+Uznávaný el. podpis & Kvalifikovaný certifikát & Žádný požadavek \\
+Kvalifikovaný el. podpis & Kvalifikovaný certifikát & Kvalifikovaný prostředek (HW) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item \textbf{Zaručený el. podpis} -- z CESNETu; uznávaný všemi orgány veřejné moci v ČR
+  \item \textbf{Uznávaný el. podpis} -- privátní klíč uložen na disku; v ČR neexistují
+  \item \textbf{Kvalifikovaný el. podpis} -- privátní klíč na kvalifikovaném prostředku (čipová karta, USB token); nelze vyexportovat
+\end{itemize}
+
+%=============================================================================
+\subsection{Identifikace, Autentizace, Vícefaktorová autentizace}
+%=============================================================================
+
+\subsubsection{Identifikace vs. Autentizace vs. Autorizace}
+
+\begin{itemize}
+  \item \textbf{Identifikace} -- entita předloží identifikátor (uživatelské jméno); systém pozná, kdo to je
+  \item \textbf{Autentizace} -- ověření, že entita je skutečně tím, za koho se vydává (heslo, certifikát)
+  \item \textbf{Autorizace} -- udělení práv; co smí autentizovaný uživatel dělat
+  \item \textbf{Auditování} -- sledování činnosti a vytváření záznamů; zajišťuje odpovědnost
+\end{itemize}
+
+\subsubsection{Hesla}
+
+\textbf{Ukládání hesel:}
+\begin{itemize}
+  \item Hesla se ukládají jako hash, \textbf{nikdy v plain textu}
+  \item \textbf{Salt} -- náhodný řetězec přidaný k heslu před hashováním; zabrání rainbow table útokům
+  \item \textbf{Pepper} -- tajná hodnota přidaná k heslu; uložena odděleně od databáze
+  \item Moderní funkce: \textbf{argon2} (doporučený), \textbf{bcrypt} -- záměrně pomalé; parametrizovatelné
+\end{itemize}
+
+\textbf{Formát bcrypt hashe:} \texttt{\$2a\$12\$salt(22 znaků)hash(31 znaků)}
+\begin{itemize}
+  \item \texttt{\$2a\$} -- typ algoritmu (Bcrypt)
+  \item \texttt{12\$} -- cost faktor ($2^{12} = 4096$ iterací)
+\end{itemize}
+
+\subsubsection{Vícefaktorová autentizace (MFA)}
+
+Kombinace více faktorů z různých kategorií:
+\begin{itemize}
+  \item \textbf{Něco co vím} -- heslo, PIN, bezpečnostní otázka
+  \item \textbf{Něco co mám} -- telefon (OTP), hardware token, čipová karta
+  \item \textbf{Něco co jsem} -- biometrika (otisk prstu, sken sítnice, hlas)
+\end{itemize}
+
+\textbf{2FA (Two-Factor Authentication)} -- přesně 2 různé faktory.
+\textbf{2SV (Two-Step Verification)} -- 2 kroky ověření (mohou být ze stejné kategorie, např. heslo + OTP SMS).
+V praxi se pojmy 2FA a 2SV nerozlišují.
+
+\paragraph{TOTP (Time-based One-time Password)}
+Jednorázové heslo generované na základě aktuálního času a sdíleného tajemství.
+Platné zpravidla 30 sekund. Standard RFC 6238.
+
+\paragraph{FIDO2 / WebAuthn}
+Autentizační systém pro webové aplikace (W3C + FIDO Alliance). Vstupní brána do SSO (Single Sign On).
+Eliminuje hesla -- autentizace pomocí HW klíče, biometrie nebo PIN s kryptografickým důkazem.
+
+%=============================================================================
+\subsection{Segmentace sítě a bezpečnostní technologie}
+%=============================================================================
+
+\subsubsection{Segmentace sítě}
+
+Segmentace sítě = vytvoření podsítí oddělujících různé části sítě. Omezuje šíření malware a zvyšuje výkon.
+
+\subsubsection{Firewall}
+
+Síťové zařízení blokující nebo povolující provoz na základě pravidel.
+
+\paragraph{Techniky blokování}
+\begin{itemize}
+  \item \textbf{drop} -- paket zahozen; odesílatel nedostane žádnou odpověď
+  \item \textbf{reject} -- paket zahozen; odesílatel dostane ICMP zprávu o nedostupnosti
+  \item \textbf{tcp reset} -- pošle TCP RST
+\end{itemize}
+
+\paragraph{Typy firewallů}
+\begin{itemize}
+  \item \textbf{Packet filter} -- filtrování na základě IP, portu, protokolu (L3/L4)
+  \item \textbf{Stateful inspection} -- sleduje stav TCP spojení
+  \item \textbf{Application layer (WAF)} -- filtrování na aplikační vrstvě (HTTP, HTTPS)
+\end{itemize}
+
+\subsubsection{Proxy servery}
+
+Proxy server funguje jako prostředník mezi klientem a cílovým serverem.
+\begin{itemize}
+  \item \textbf{Forward Proxy} -- u klienta; maskuje identitu klienta; caching; content filtering
+  \item \textbf{Reverse Proxy} -- u serveru; load balancing; SSL termination; ochrana interních serverů
+\end{itemize}
+
+\subsubsection{NAT (Network Address Translation)}
+
+Překlad IP adres v záhlaví paketů:
+\begin{itemize}
+  \item Skrývá interní síťovou strukturu
+  \item Šetří veřejné IPv4 adresy (privátní $\to$ veřejná)
+  \item SNAT (Source NAT) -- mění zdrojovou IP (pro odchozí provoz)
+  \item DNAT (Destination NAT) -- mění cílovou IP (port forwarding)
+\end{itemize}
+
+\subsubsection{IDS a IPS}
+
+\paragraph{IDS (Intrusion Detection System)}
+\begin{itemize}
+  \item Detekuje neobvyklé aktivity; generuje varování (alert)
+  \item \textbf{NIDS} -- sleduje celou síť; \textbf{HIDS} -- sleduje jeden host
+  \item Metody detekce: signaturová, anomáliová (ML)
+\end{itemize}
+
+\paragraph{IPS (Intrusion Prevention System)}
+\begin{itemize}
+  \item IDS + aktivní blokování detekované hrozby
+  \item Zastaví útok v reálném čase
+  \item Kombinace IDS/IPS je běžná
+\end{itemize}
+
+\subsubsection{TLS (Transport Layer Security)}
+
+Kryptografický protokol zajišťující bezpečnou komunikaci přes síť. Nástupce SSL.
+
+\paragraph{TLS 1.2 handshake}
+\begin{enumerate}
+  \item Client Hello (cipher suites, random)
+  \item Server Hello (certifikát, cipher suite)
+  \item Key exchange (RSA nebo DH)
+  \item Change Cipher Spec, Finished (obě strany)
+  \item Šifrovaná komunikace
+\end{enumerate}
+
+\paragraph{TLS 1.3 (aktuální standard)}
+\begin{itemize}
+  \item 1-RTT handshake (místo 2-RTT v TLS 1.2) -- snížena latence
+  \item Pouze bezpečné cipher suites; odstraněny staré (RC4, DES, MD5)
+  \item Povinný Perfect Forward Secrecy (ECDHE)
+  \item 0-RTT pro opakovaná připojení (pozor na replay attacks)
+\end{itemize}
+
+\subsubsection{VPN (Virtual Private Network)}
+
+\begin{itemize}
+  \item VPN klient vytvoří virtuální síťové rozhraní na úrovni OS
+  \item Veškerý provoz tunelován přes VPN server (šifrovaně)
+  \item VPN server aplikuje NAT -- cílový server vidí IP VPN serveru
+  \item \textbf{Remote Access VPN} -- vzdálený přístup pracovníků do firemní sítě
+  \item \textbf{Site-to-Site VPN} -- propojení dvou firemních lokalit
+  \item Protokoly: OpenVPN, WireGuard, IKEv2/IPsec, L2TP/IPsec
+\end{itemize}
+
+\subsubsection{Honeypot a Web Application Firewall}
+
+\paragraph{Honeypot}
+\begin{itemize}
+  \item Systém záměrně navržený jako lákadlo pro útočníky
+  \item Detekuje a zaznamenává útočníkovu činnost
+  \item Honeynety = sítě honeypotů
+\end{itemize}
+
+\paragraph{WAF (Web Application Firewall)}
+\begin{itemize}
+  \item Chrání webové aplikace před OWASP Top 10 (SQLi, XSS, CSRF, DoS)
+  \item Funguje jako obousměrný proxy pro HTTP/HTTPS
+  \item Analyzuje obsah požadavků, blokuje škodlivé vzory
+  \item \textasciitilde 70\% hlášených útoků cílí na aplikační vrstvu
+\end{itemize}
+
+\begin{profesorbox}[Otázky profesorů k tématu: Bezpečnost IS]
+\textbf{Zeman Václav, Ing., Ph.D.}
+\begin{itemize}
+  \item Vysvětlete rozdíl mezi symetrickou a asymetrickou kryptografií.
+  \item Jak funguje digitální podpis?
+  \item Jaký je rozdíl mezi hashem, MAC a digitálním podpisem z hlediska bezpečnostních vlastností?
+  \item Co je TLS a jak probíhá TLS handshake?
+\end{itemize}
+\textbf{Sedláček Jiří, Ing., Ph.D.}
+\begin{itemize}
+  \item Co je eIDAS a jaké typy elektronických podpisů definuje?
+  \item Jak funguje PKI a certifikáty?
+  \item Vysvětlete vícefaktorovou autentizaci a její faktory.
+\end{itemize}
+\textbf{Komise: Svátek, Chlapek, Zbořil}
+\begin{itemize}
+  \item Jaké jsou technologie pro segmentaci sítě?
+  \item Co je IDS a jak se liší od IPS?
+  \item Jaký je rozdíl mezi forward a reverse proxy?
+\end{itemize}
+\textbf{Chudán David, Ing., Ph.D.}
+\begin{itemize}
+  \item Jak se správně ukládají hesla v databázi?
+  \item Co je salt a proč je důležitý?
+  \item Jak funguje NAT?
+\end{itemize}
+\textbf{Vojíř Stanislav, Ing., Ph.D.}
+\begin{itemize}
+  \item Co jsou AEAD schémata a proč jsou důležitá?
+  \item Jaký je bezpečnostní problém s ECB módem blokové šifry?
+\end{itemize}
+\end{profesorbox}
