@@ -9,6 +9,8 @@
 Objektově-orientované programování je programovací paradigma organizující software kolem objektů,
 které kombinují data (atributy/pole) a chování (metody).
 
+\textbf{Lidsky řečeno:} Místo toho, abys psal program jako jeden dlouhý seznam příkazů, OOP tě nutí přemýšlet o světě jako o věcech (objektech), které mají vlastnosti a umějí něco dělat. Auto má značku, barvu a počet dveří (data) -- a umí nastartovat, zastavit a zatočit (metody). V programu pak vytvoříš třídu \texttt{Auto} jako šablonu a z ní libovolně mnoho konkrétních aut (objektů). Každé auto si pamatuje své vlastní hodnoty, ale sdílí stejné chování. Díky tomu je kód přehledný, znovupoužitelný a snáz se v něm orientuje víc lidí.
+
 \paragraph{1. Abstrakce (Abstraction)}
 Proces skrytí složitých implementačních detailů a zobrazení pouze nezbytné funkcionality.
 \begin{itemize}
@@ -64,7 +66,7 @@ Sdružení dat a metod, které s nimi pracují, do jednoho celku (třídy) a ome
   \item \textbf{Modifikátory přístupu v Javě:}
     \begin{itemize}
       \item \texttt{private} -- přístup pouze z dané třídy
-      \item \texttt{protected} -- přístup z třídy a podtříd
+      \item \texttt{protected} -- přístup z třídy a podtříd (\textbf{podtřída} = třída, která dědí z jiné třídy; v Javě \texttt{class Pes extends Zvire}, v C\# přesně \texttt{class Pes : Zvire} -- syntaxe se liší, princip je stejný)
       \item \texttt{package-private} (výchozí) -- přístup v rámci balíčku
       \item \texttt{public} -- přístup odkudkoliv
     \end{itemize}
@@ -88,11 +90,21 @@ public class BankovniUcet {
 \paragraph{3. Dědičnost (Inheritance)}
 Mechanismus, který umožňuje nové třídě přebírat vlastnosti a metody existující (nadřazené) třídy.
 \begin{itemize}
-  \item Klíčové slovo \texttt{extends} (třída) nebo \texttt{implements} (rozhraní)
-  \item Java podporuje jednoduchou dědičnost tříd, ale vícenásobnou implementaci rozhraní
+  \item Klíčové slovo \texttt{extends} (třída) nebo \texttt{implements} (rozhraní) --
+    rozdíl: \texttt{extends} použiješ, když dědíš z \textbf{konkrétní nebo abstraktní třídy}
+    (přebíráš hotový kód, atributy, chování); \texttt{implements} použiješ, když třída
+    plní \textbf{rozhraní} (interface) -- rozhraní je jen „smlouva" co třída musí umět,
+    bez jakékoliv implementace. V C\# se obojí píše jako \texttt{:}, Java to rozlišuje
+    syntakticky.
+  \item Java podporuje jednoduchou dědičnost tříd (jen jeden \texttt{extends}), ale vícenásobnou implementaci rozhraní (\texttt{implements A, B, C})
   \item \texttt{super} -- odkaz na nadřazenou třídu
-  \item \textbf{IS-A} vztah (pes IS-A zvíře)
-  \item \textbf{Nevýhody:} těsné propojení (coupling) tříd; změna v rodičovské třídě může rozbít potomky
+  \item \textbf{IS-A} vztah (pes IS-A zvíře) -- říká, že podtřída \textit{je druhem} nadtřídy;
+    dědičnost je správná právě tehdy, když platí IS-A: \texttt{Pes extends Zvire} dává smysl,
+    protože pes opravdu \textit{je} zvíře. Pokud IS-A neplatí, dědičnost nepoužívej.
+  \item \textbf{HAS-A} vztah (auto HAS-A motor) -- kompozice; třída \textit{obsahuje} jinou třídu
+    jako atribut, místo aby z ní dědila. \texttt{Auto} nemá \textit{být} motor, ale \textit{mít} ho
+    (\texttt{private Motor motor;}). Kompozice je obecně preferována před dědičností -- méně těsné propojení.
+  \item \textbf{Nevýhody dědičnosti:} těsné propojení (coupling) tříd; změna v rodičovské třídě může rozbít potomky
 \end{itemize}
 
 \paragraph{4. Polymorfismus (Polymorphism)}
@@ -220,11 +232,32 @@ Pouze \textbf{jedna} abstraktní třída &
 \subsubsection{Principy SOLID}
 
 \begin{itemize}
-  \item \textbf{S} -- Single Responsibility Principle: třída má mít pouze jeden důvod ke změně
-  \item \textbf{O} -- Open/Closed Principle: otevřena pro rozšíření, uzavřena pro modifikaci
-  \item \textbf{L} -- Liskov Substitution Principle: podtřídy jsou zaměnitelné za nadtřídy
-  \item \textbf{I} -- Interface Segregation Principle: raději více specifických rozhraní
-  \item \textbf{D} -- Dependency Inversion Principle: závislost na abstrakcích, ne na konkrétních implementacích
+  \item \textbf{S} -- Single Responsibility Principle: třída má mít pouze jeden důvod ke změně.
+    Každá třída dělá jednu věc a dělá ji dobře. Třída \texttt{Invoice} počítá cenu faktury --
+    ale tisk faktury do PDF má mít vlastní třídu \texttt{InvoicePrinter}. Pokud by se změnil
+    formát PDF, nemusíš sahat do logiky výpočtu ceny.
+
+  \item \textbf{O} -- Open/Closed Principle: třída je otevřena pro rozšíření, ale uzavřena pro
+    modifikaci. Přidáš nové chování přes nové třídy (dědičností nebo kompozicí), ne tím, že
+    přepisuješ stávající kód. Příklad: místo přidání \texttt{if (typ == "kruh")} do existující
+    metody vytvoříš novou třídu \texttt{Kruh}, která implementuje rozhraní \texttt{Tvar}.
+
+  \item \textbf{L} -- Liskov Substitution Principle: podtřídy musejí být plně zaměnitelné za
+    nadtřídy -- kód, který pracuje s \texttt{Zvire}, musí fungovat stejně správně i když mu
+    předáš \texttt{Pes} nebo \texttt{Kocka}. Pokud podtřída mění nebo ruší chování rodičovské
+    třídy (háže výjimku tam, kde rodič nic nedělá), porušuje LSP.
+
+  \item \textbf{I} -- Interface Segregation Principle: raději víc malých specifických rozhraní
+    než jedno velké „all-in-one". Třída by neměla být nucena implementovat metody, které
+    nepotřebuje. Místo jednoho rozhraní \texttt{Stroj} s metodami \texttt{tiskni()},
+    \texttt{skenuj()}, \texttt{faxuj()} udělej tři samostatná -- tiskárna pak implementuje
+    jen \texttt{Tiskatelny}, ne zbylé dvě.
+
+  \item \textbf{D} -- Dependency Inversion Principle: třídy vysoké úrovně by neměly záviset
+    na třídách nízké úrovně -- oboje by mělo záviset na abstrakcích (rozhraních). Příklad:
+    \texttt{ObjednavkoveService} nemá přímo vytvářet \texttt{new MySQLDatabaze()}, ale dostat
+    rozhraní \texttt{Databaze} zvenčí (injekce závislostí). Snadno tak vyměníš MySQL za
+    jinou DB bez dotyku servisní logiky.
 \end{itemize}
 
 %=============================================================================
@@ -306,22 +339,35 @@ void testNajdiUzivatele() {
 \textbf{Lambda výraz} je anonymní funkce -- blok kódu, který lze předat jako argument nebo uložit do proměnné.
 Zavedeny v Javě 8. Syntaxe: \texttt{(parametry) -> \{tělo\}}
 
-\textbf{Funkcionální rozhraní} -- rozhraní s právě jednou abstraktní metodou (označuje se \texttt{@FunctionalInterface}).
+\textbf{Lidsky:} Před Javou 8 jsi musel pro každou „malou akci" psát celou anonymní třídu (viz příklad níže).
+Lambda je zkratka -- místo tří řádků boilerplate napíšeš jednu řádku. Jde vlastně o způsob, jak předat
+\textit{chování} (funkci) jako hodnotu, stejně jako předáváš číslo nebo řetězec.
 
-Zabudovaná funkcionální rozhraní v Javě:
+\textbf{Funkcionální rozhraní} -- rozhraní s právě jednou abstraktní metodou (označuje se \texttt{@FunctionalInterface}).
+Lambda výraz \textit{je} implementace takového rozhraní -- Java ví, kterou jedinou metodu má lambda naplnit.
+
+\textbf{Zabudovaná funkcionální rozhraní} -- Java 8 dodává sadu hotových rozhraní pro nejčastější případy,
+abys nemusel psát vlastní. Tabulka níže ukazuje co každé „očekává" a co „vrací":
+
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{llll}
 \toprule
-\textbf{Rozhraní} & \textbf{Signatura} & \textbf{Použití} \\
+\textbf{Rozhraní} & \textbf{Vstup $\to$ Výstup} & \textbf{Použití} & \textbf{Příklad} \\
 \midrule
-\texttt{Function<T,R>} & \texttt{R apply(T t)} & Transformace hodnoty \\
-\texttt{Predicate<T>} & \texttt{boolean test(T t)} & Filtrování \\
-\texttt{Consumer<T>} & \texttt{void accept(T t)} & Spotřebování hodnoty \\
-\texttt{Supplier<T>} & \texttt{T get()} & Produkce hodnoty \\
-\texttt{BiFunction<T,U,R>} & \texttt{R apply(T t, U u)} & Transformace dvou hodnot \\
+\texttt{Function<T,R>} & T $\to$ R & Transformace hodnoty & \texttt{s -> s.length()} \\
+\texttt{Predicate<T>} & T $\to$ boolean & Filtrování (ano/ne) & \texttt{s -> s.isEmpty()} \\
+\texttt{Consumer<T>} & T $\to$ nic & Spotřebování, vedlejší efekt & \texttt{s -> System.out.println(s)} \\
+\texttt{Supplier<T>} & nic $\to$ T & Produkce hodnoty & \texttt{() -> new ArrayList<>()} \\
+\texttt{BiFunction<T,U,R>} & T, U $\to$ R & Transformace dvou hodnot & \texttt{(a,b) -> a + b} \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\textbf{Jak číst tabulku:} \texttt{Function} vezme jednu věc a vrátí jinou (např. ze \texttt{String} udělá \texttt{Integer} -- délku).
+\texttt{Predicate} vezme věc a řekne pravda/nepravda -- proto se používá ve \texttt{filter()}.
+\texttt{Consumer} věc vezme, ale nic nevrátí -- jen ji ``spotřebuje'' (vypíše, uloží...).
+\texttt{Supplier} naopak nic nebere, ale hodnotu \textit{vyrobí}.
+\texttt{BiFunction} je jako \texttt{Function}, ale bere dva vstupy místo jednoho.
 
 \begin{lstlisting}[language=Java, caption=Lambda výrazy]
 // Starý způsob - anonymní třída
@@ -344,9 +390,20 @@ Comparator<String> comp3 = String::compareTo;
 
 \textbf{Klíčové vlastnosti:}
 \begin{itemize}
-  \item \textbf{Lazy evaluation} -- intermediární operace se \textit{nevyhodnocují} dokud nepřijde terminální operace; umožňuje optimalizace (zkratové vyhodnocení, sloučení operací)
+  \item \textbf{Lazy evaluation} -- intermediární operace (\texttt{filter}, \texttt{map}~\ldots) se
+    \textit{nevyhodnocují hned} -- jen popíšou, co se má stát. Skutečné zpracování proběhne až
+    ve chvíli, kdy přijde terminální operace (\texttt{collect}, \texttt{findFirst}~\ldots).
+    \textbf{Proč je to dobré?} Představ si seznam milionu čísel a chceš první sudé větší než 100.
+    Bez lazy evaluation bys profiltroval všech milion prvků a pak vzal první výsledek.
+    S lazy evaluation stream okamžitě zastaví, jakmile najde první shodu -- zbytek vůbec nezpracuje.
+
   \item \textbf{Spotřeba} -- stream lze projít pouze jednou; po terminální operaci je ``vyčerpaný''
-  \item \textbf{Nemodifikuje zdroj} -- operace nevytváří vedlejší efekty na původní kolekci
+
+  \item \textbf{Nemodifikuje zdroj} -- stream nikdy nemění původní kolekci, ze které vznikl;
+    \texttt{filter()} nebo \texttt{map()} vždy vrátí \textit{nový} stream s novými daty.
+    Původní \texttt{List} zůstane nedotčený.
+    \textbf{Příklad:} zavoláš \texttt{seznam.stream().filter(...).collect(...)} --
+    \texttt{seznam} má pořád stejné prvky jako předtím, výsledek filtrování je v nové proměnné.
   \item \textbf{Paralelizovatelný} -- \texttt{parallelStream()} automaticky rozdělí práci mezi vlákna (Fork/Join pool)
 \end{itemize}
 
@@ -354,6 +411,26 @@ Comparator<String> comp3 = String::compareTo;
 \begin{itemize}
   \item \textbf{Intermediární (lazy)} -- vracejí nový stream: \texttt{filter()}, \texttt{map()}, \texttt{flatMap()},
     \texttt{sorted()}, \texttt{distinct()}, \texttt{limit()}, \texttt{peek()}
+
+    \textbf{Rozdíl \texttt{map} vs \texttt{flatMap}:}
+    \texttt{map()} transformuje každý prvek na jeden výsledek -- ze streamu N prvků vznikne stream N prvků.
+    \texttt{flatMap()} transformuje každý prvek na \textit{stream} výsledků a pak všechny tyto streamy
+    „zploští" do jednoho -- použiješ ho, když by \texttt{map()} vrátil stream streamů.
+    Příklad: máš seznam vět a chceš stream jednotlivých slov --
+    \texttt{map} by vrátil \texttt{Stream<String[]>} (každá věta jako pole),
+    \texttt{flatMap} vrátí rovnou \texttt{Stream<String>} (všechna slova v jednom streamu):
+\begin{lstlisting}[language=Java]
+List<String> vety = List.of("ahoj svete", "jak se mas");
+
+// map -- Stream<String[]>, vnořené pole
+vety.stream().map(v -> v.split(" "));
+
+// flatMap -- Stream<String>, plochý seznam slov
+vety.stream()
+    .flatMap(v -> Arrays.stream(v.split(" ")))
+    .collect(Collectors.toList());
+// ["ahoj", "svete", "jak", "se", "mas"]
+\end{lstlisting}
   \item \textbf{Terminální (eager)} -- vrátí výsledek nebo vedlejší efekt: \texttt{collect()}, \texttt{forEach()},
     \texttt{reduce()}, \texttt{count()}, \texttt{findFirst()}, \texttt{anyMatch()}, \texttt{allMatch()}
 \end{itemize}

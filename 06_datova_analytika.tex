@@ -105,6 +105,23 @@ Proces zajišťování a udržování kvality dat:
 \paragraph{Master Data Management (MDM)}
 Centrální správa klíčových podnikových dat (zákazníci, produkty, zaměstnanci) -- jeden ``zlatý záznam''.
 
+\textbf{Lidsky:} Ve velké firmě má zákazník „Jan Novák" záznam v CRM systému, v ERP systému,
+v e-shopu a v účetním systému -- a v každém systému může být trochu jinak zapsaný (jiný formát
+adresy, překlep v názvu, jiné IČO). MDM říká: vytvoříme \textbf{jeden autoritativní zdroj pravdy}
+(„zlatý záznam") pro každý klíčový objekt, a všechny systémy se na něj odkazují místo toho,
+aby si každý vedl vlastní kopii.
+
+\textbf{Co MDM řeší:}
+\begin{itemize}
+  \item \textbf{Duplicity} -- stejný zákazník evidovaný vícekrát pod různými záznamy
+  \item \textbf{Nekonzistence} -- „Novák s.r.o." vs „NOVÁK S.R.O." vs „Novák, s.r.o." -- třikrát ta samá firma
+  \item \textbf{Silo efekt} -- každé oddělení má svá data, která se neshodují s ostatními
+\end{itemize}
+
+\textbf{Příklad:} Banka má 5 systémů. Zákazník změní adresu na přepážce -- bez MDM musí pracovník
+aktualizovat 5 systémů ručně a v každém může udělat chybu. S MDM aktualizuje jednou v centrálním
+registru a všechny systémy si změnu stáhnou automaticky.
+
 %=============================================================================
 \subsection{Datový sklad, OLAP a Business Intelligence}
 %=============================================================================
@@ -112,6 +129,42 @@ Centrální správa klíčových podnikových dat (zákazníci, produkty, zaměs
 \subsubsection{Datový sklad (Data Warehouse)}
 
 Centrální úložiště integrovaných dat z různých zdrojů, optimalizované pro analytické dotazy.
+
+\textbf{Proč nestačí běžná relační databáze (OLTP)?}
+
+Relační databáze (MySQL, PostgreSQL) jsou navrženy pro \textbf{OLTP} -- tisíce malých rychlých
+transakcí za sekundu (objednávka, platba, aktualizace skladu). Datový sklad je navržen pro
+\textbf{OLAP} -- málo dotazů, ale každý prochází miliony řádků a počítá agregace.
+Jsou to dva zásadně odlišné případy použití:
+
+\begin{center}
+\begin{tabular}{p{3.5cm}p{5cm}p{5cm}}
+\toprule
+\textbf{Vlastnost} & \textbf{OLTP (relační DB)} & \textbf{DWH / OLAP} \\
+\midrule
+Účel & Provozní transakce & Analytika, reporty \\
+Dotazy & Malé, rychlé (ms) & Velké, pomalé (sekundy--minuty) \\
+Objem dat & Aktuální stav & Historická data (roky) \\
+Schéma & Normalizované (3NF) & Denormalizované (hvězda) \\
+Zdroj dat & Jeden systém & Více systémů (ERP, CRM\ldots) \\
+Zápisy & Časté INSERT/UPDATE & Dávkové načítání (ETL) \\
+Uložení & Řádkové & Sloupcové (čte jen potřebné sloupce) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{Příklad:} Dotaz „jaký byl obrat elektroniky po regionech v každém měsíci roku 2023"
+prochází miliony řádků a dělá GROUP BY přes 3 dimenze. Na produkční OLTP databázi by:
+\begin{itemize}
+  \item \textbf{trval minuty} -- normalizované schéma vyžaduje mnoho JOINů; OLTP indexy
+    jsou optimalizované pro hledání jednoho záznamu, ne pro skenování milionů
+  \item \textbf{zpomalil produkci} -- analytický dotaz zamkne tabulky a brání
+    ostatním uživatelům v přidávání objednávek
+  \item \textbf{neměl historická data} -- OLTP typicky uchovává jen aktuální stav;
+    smazaná nebo přepsaná data jsou pryč
+  \item \textbf{neměl data z jiných systémů} -- prodeje jsou v e-shopu, náklady v ERP,
+    zákazníci v CRM -- OLTP to nedá dohromady
+\end{itemize}
 
 \textbf{Charakteristiky datového skladu (W. Inmon):}
 \begin{itemize}
@@ -130,6 +183,43 @@ Centrální úložiště integrovaných dat z různých zdrojů, optimalizované
   \item \textbf{OLAP engine} -- analytické zpracování
   \item \textbf{Reporting/BI nástroje} -- vizualizace a reporty
 \end{itemize}
+
+\paragraph{Jak vypadá tok dat při příchodu do datového skladu?}
+
+Představ si e-shop, který každý den zpracuje tisíce objednávek a chce analyzovat prodeje:
+
+\begin{enumerate}
+  \item \textbf{Zdrojové systémy generují data} -- transakční databáze (OLTP) e-shopu zapíše
+    novou objednávku; ERP systém aktualizuje sklad; CRM zaznamená kontakt se zákazníkem.
+    Tyto systémy jsou optimalizované na rychlé zápisy, ne na analytiku.
+
+  \item \textbf{Extract -- extrakce ze zdrojů} -- ETL/ELT nástroj v pravidelných intervalech
+    (každou noc nebo průběžně) vytáhne nová data ze zdrojů. Buď celou tabulku (full load),
+    nebo jen změny od posledního načtení (inkrementální -- CDC).
+
+  \item \textbf{Staging area -- přistávací plocha} -- surová data se uloží dočasně beze změn.
+    Vypadají přesně tak, jak přišla ze zdroje -- s chybami, duplicitami, různými formáty.
+    Slouží jako bezpečnostní síť: pokud transformace selže, máme původní data k dispozici.
+
+  \item \textbf{Transform -- čištění a přeformátování} -- zde se data upraví:
+    opraví se chyby (NULL hodnoty, překlepy), sjednotí formáty (datum z různých systémů
+    do jednoho formátu), odstraní duplicity, spočítají odvozené hodnoty (marže, sleva).
+
+  \item \textbf{Load -- načtení do DWH} -- vyčištěná data se načtou do datového skladu
+    do dimenzionálního schématu (hvězda/sněhová vločka). Fakta (prodeje, transakce)
+    se spojí s dimenzemi (čas, zákazník, produkt, region).
+
+  \item \textbf{Data Mart -- výřezy pro oddělení} -- z centrálního DWH se vytvoří
+    specializované pohledy: marketingový data mart (kampaně, konverze), finanční data mart
+    (tržby, náklady), logistický (sklady, dodací doby).
+
+  \item \textbf{OLAP + BI nástroje -- analytika a reporty} -- analytici a manažeři
+    se připojí přes Power BI, Tableau nebo Excel a táhnou data. Otázka „jaký byl obrat
+    po regionech v Q3 ve srovnání s loňskem" se zodpoví během sekund -- to by v OLTP
+    databázi trvalo minuty a zatížilo by produkční systém.
+\end{enumerate}
+
+\textit{Celý tok:} OLTP systémy $\to$ Staging area $\to$ ETL/ELT $\to$ Data Warehouse $\to$ Data Mart $\to$ BI nástroje $\to$ manažer
 
 \subsubsection{ETL (Extract, Transform, Load)}
 
@@ -360,13 +450,33 @@ ORDER BY d.mesic, celkova_trzba DESC;
 
 OLAP umožňuje interaktivní analýzu dat z více perspektiv (dimenzí).
 
+\textbf{Co to znamená „z více perspektiv"?} Představ si kostku (OLAP cube) -- máš data o tržbách
+e-shopu a na každé ose kostky je jiná dimenze: \textit{čas} (leden, únor\ldots), \textit{region}
+(Praha, Brno, Ostrava\ldots), \textit{kategorie produktu} (elektronika, oblečení\ldots).
+Každá buňka kostky obsahuje metriku (tržba v Kč). OLAP ti umožní kostkou interaktivně
+otáčet a říznout ji z libovolného úhlu -- bez čekání na IT, bez psaní SQL.
+
+\textit{Příklad průchodu analytikem:}
+\begin{enumerate}
+  \item Manažer se podívá na celkové tržby za rok 2024 (nejvyšší úroveň)
+  \item Vidí, že Q3 je slabý $\to$ \textbf{drill-down} na měsíce: červenec, srpen, září
+  \item Září je nejhorší $\to$ \textbf{slice}: zobrazí jen září, všechny regiony
+  \item Vidí, že Ostrava výrazně zaostává $\to$ \textbf{dice}: září + Ostrava + všechny kategorie
+  \item Zjistí, že elektronika v Ostravě v září klesla $\to$ \textbf{pivot}: otočí pohled
+    a porovná elektroniku v Ostravě napříč všemi měsíci roku
+  \item \textbf{Roll-up} zpět na kvartály pro prezentaci vedení
+\end{enumerate}
+
+Celý tento průchod trvá minuty v Power BI nebo Tableau -- bez OLAP by každý krok byl
+samostatný SQL dotaz přes IT oddělení.
+
 \paragraph{OLAP operace}
 \begin{itemize}
-  \item \textbf{Drill-down} -- přechod na nižší úroveň granularity (rok $\to$ čtvrtletí $\to$ měsíc)
+  \item \textbf{Drill-down} -- přechod na nižší úroveň granularity (rok $\to$ čtvrtletí $\to$ měsíc $\to$ den)
   \item \textbf{Roll-up (Drill-up)} -- agregace na vyšší úroveň (měsíc $\to$ rok)
-  \item \textbf{Slice} -- výběr jedné dimenze (prodeje pouze pro rok 2023)
-  \item \textbf{Dice} -- výběr podkubu (prodeje pro rok 2023 a region CZ)
-  \item \textbf{Pivot (Rotate)} -- rotace pohledu na data
+  \item \textbf{Slice} -- výběr jedné hodnoty jedné dimenze (prodeje pouze pro rok 2023); zmenší kostku o jednu dimenzi
+  \item \textbf{Dice} -- výběr podkubu přes více dimenzí (prodeje pro rok 2023 a region CZ a kategorii elektronika)
+  \item \textbf{Pivot (Rotate)} -- rotace pohledu; prohodí dimenze na osách (řádky $\leftrightarrow$ sloupce)
 \end{itemize}
 
 \paragraph{Typy OLAP}

@@ -22,15 +22,43 @@ Přístup k síti & Fyzický přenos & Ethernet, Wi-Fi \\
 \end{tabular}
 \end{center}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.25\textwidth]{img/isoositcpip_1.png}
+  \caption{Porovnání modelů ISO/OSI a TCP/IP}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/internet-protocol-in-tcp-ip.jpg}
+  \caption{Síťové protokoly v modelu TCP/IP}
+\end{figure}
+
 \subsubsection{IP (Internet Protocol)}
+
+\textbf{Vrstva:} Síťová (TCP/IP: Internet layer, OSI: vrstva 3)
 
 IP je základní protokol síťové vrstvy zajišťující směrování paketů.
 
 \paragraph{IPv4}
 \begin{itemize}
   \item 32-bitová adresa (4 oktety, např. 192.168.1.1)
-  \item Třídy adres A, B, C, D (multicast), E (rezervováno)
-  \item Privátní adresy: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+  \item \textbf{Třídy adres} -- historické dělení adresního prostoru (classful networking); každá třída má výchozí masku a rozsah:
+    \begin{itemize}
+      \item \textbf{A} -- rozsah 0.0.0.0 -- 127.255.255.255, maska /8; velké sítě (např. 10.0.0.0)
+      \item \textbf{B} -- rozsah 128.0.0.0 -- 191.255.255.255, maska /16; střední sítě (např. 172.16.0.0)
+      \item \textbf{C} -- rozsah 192.0.0.0 -- 223.255.255.255, maska /24; malé sítě (např. 192.168.1.0)
+      \item \textbf{D} -- rozsah 224.0.0.0 -- 239.255.255.255; multicast (skupinové vysílání)
+      \item \textbf{E} -- rozsah 240.0.0.0 -- 255.255.255.255; rezervováno pro experimentální účely
+    \end{itemize}
+    Dnes se místo tříd používá \textbf{CIDR} (Classless Inter-Domain Routing) -- maska se zapisuje jako prefix (např. /24).
+  \item \textbf{Privátní adresy} (RFC 1918) -- adresy, které nejsou směrovány na internetu; slouží pro interní sítě (LAN, domácnosti, firmy):
+    \begin{itemize}
+      \item 10.0.0.0/8 -- třída A (velké podnikové sítě)
+      \item 172.16.0.0/12 -- třída B (střední sítě)
+      \item 192.168.0.0/16 -- třída C (domácí sítě, typicky 192.168.1.x)
+    \end{itemize}
+    Na internet se dostanou přes \textbf{NAT} -- router privátní adresu přeloží na svou veřejnou IP.
   \item \textbf{Přidělování adres:} statické nebo DHCP (Dynamic Host Configuration Protocol)
   \item \textbf{NAT} (Network Address Translation) -- překlad privátních adres na veřejné; řeší nedostatek adres
 \end{itemize}
@@ -39,11 +67,30 @@ IP je základní protokol síťové vrstvy zajišťující směrování paketů.
 \begin{itemize}
   \item 128-bitová adresa (8 skupin po 4 hex číslicích, např. 2001:0db8:85a3::8a2e:0370:7334)
   \item $2^{128}$ adres -- řeší problém nedostatku adres
-  \item Automatická konfigurace (SLAAC), vestavěný IPsec
-  \item Záhlaví zjednodušeno oproti IPv4
+  \item \textbf{SLAAC} (Stateless Address Autoconfiguration) -- zařízení si samo nakonfiguruje IPv6 adresu \textit{bez DHCP serveru}; router rozešle Router Advertisement (RA) se síťovým prefixem, zařízení k němu připojí vlastní identifikátor odvozený z MAC adresy (EUI-64) nebo náhodně vygenerovaný
+  \item \textbf{IPsec} -- sada protokolů pro zabezpečení komunikace na síťové vrstvě (šifrování + autentizace paketů); v IPv4 je volitelný, v IPv6 je \textit{nativně integrován}; využívá se např. ve VPN; dva režimy:
+    \begin{itemize}
+      \item \textbf{Transport mode} -- šifruje pouze payload (obsah paketu)
+      \item \textbf{Tunnel mode} -- šifruje celý IP paket (typické pro VPN)
+    \end{itemize}
+  \item Záhlaví zjednodušeno oproti IPv4 -- pevná délka 40 bajtů, volitelná rozšíření přes Extension Headers
 \end{itemize}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{img/HeaderFormat.png}
+  \caption{Struktura IPv6 hlavičky}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{img/ip-header-2.png}
+  \caption{Struktura IPv4 hlavičky}
+\end{figure}
+
 \subsubsection{TCP (Transmission Control Protocol)}
+
+\textbf{Vrstva:} Transportní (TCP/IP: Transport layer, OSI: vrstva 4)
 
 TCP je spolehlivý, spojovaný protokol transportní vrstvy. Garantuje doručení dat ve správném pořadí.
 
@@ -53,6 +100,12 @@ TCP je spolehlivý, spojovaný protokol transportní vrstvy. Garantuje doručen�
   \item \textbf{SYN-ACK} -- server potvrdí (ACK = ISN+1) a pošle vlastní SYN se svým ISN
   \item \textbf{ACK} -- klient potvrdí serverovo ISN (ACK = serverISN+1); spojení navázáno
 \end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/3-way-handshake.png}
+  \caption{TCP 3-Way Handshake}
+\end{figure}
 
 \paragraph{Ukončení spojení -- 4-Way Termination}
 \begin{enumerate}
@@ -65,12 +118,18 @@ TCP je spolehlivý, spojovaný protokol transportní vrstvy. Garantuje doručen�
 \paragraph{Vlastnosti TCP}
 \begin{itemize}
   \item \textbf{Spolehlivost} -- potvrzování (ACK), opakování ztracených segmentů
-  \item \textbf{Řízení toku} -- sliding window; zabraňuje zahlcení příjemce
+  \item \textbf{Řízení toku} -- sliding window; zabraňuje zahlcení příjemce.
+    Princip: příjemce řekne odesílateli, kolik dat najednou zvládne přijmout (\textit{velikost okna}).
+    Odesílatel může poslat právě tolik bajtů, aniž čeká na potvrzení každého paketu zvlášť -- okno se
+    „posouvá" dopředu vždy, když přijde ACK. Větší okno = vyšší propustnost; pokud příjemce nestíhá,
+    okno zmenší a odesílatel zpomalí.
   \item \textbf{Řízení přetížení} -- slow start, congestion avoidance; zabraňuje zahlcení sítě
   \item \textbf{Multiplexování} -- portová čísla (0--65535); dobře známé porty 0--1023
 \end{itemize}
 
 \subsubsection{UDP (User Datagram Protocol)}
+
+\textbf{Vrstva:} Transportní (TCP/IP: Transport layer, OSI: vrstva 4)
 
 UDP je nespolehlivý, nespojovaný protokol. Nezaručuje doručení ani pořadí paketů.
 Vhodný tam, kde je rychlost důležitější než spolehlivost:
@@ -83,6 +142,8 @@ Vhodný tam, kde je rychlost důležitější než spolehlivost:
 
 \subsubsection{ICMP (Internet Control Message Protocol)}
 
+\textbf{Vrstva:} Síťová (TCP/IP: Internet layer, OSI: vrstva 3)
+
 ICMP je protokol síťové vrstvy pro zasílání chybových zpráv a diagnostiku sítě.
 \begin{itemize}
   \item \textbf{ping} -- testuje dosažitelnost hosta (ICMP Echo Request/Reply)
@@ -92,6 +153,8 @@ ICMP je protokol síťové vrstvy pro zasílání chybových zpráv a diagnostik
 
 \subsubsection{DNS (Domain Name System)}
 
+\textbf{Vrstva:} Aplikační (TCP/IP: Application layer, OSI: vrstva 7)
+
 DNS překládá doménová jména na IP adresy (a zpět -- reverzní DNS).
 
 \paragraph{Hierarchická struktura DNS}
@@ -99,7 +162,10 @@ DNS překládá doménová jména na IP adresy (a zpět -- reverzní DNS).
   \item \textbf{Root DNS} -- kořenové servery (13 skupin, označeny A--M)
   \item \textbf{TLD (Top Level Domain)} -- .cz, .com, .org, .net, .edu
   \item \textbf{Autoritativní DNS server} -- zná záznamy pro danou doménu
-  \item \textbf{Rekurzivní resolver} -- ptá se jménem klienta (typicky DNS poskytovatele)
+  \item \textbf{Rekurzivní resolver} -- ptá se jménem klienta (typicky DNS poskytovatele);
+    funguje jako „prostředník": klient mu pošle dotaz a on za něj celý řetězec dotazů
+    (root $\to$ TLD $\to$ autoritativní server) vyřeší sám a vrátí klientovi hotovou odpověď.
+    Klient tedy nemusí vědět nic o hierarchii DNS -- resolver udělá všechnu práci za něj.
 \end{itemize}
 
 \paragraph{Typy DNS záznamů}
@@ -108,9 +174,16 @@ DNS překládá doménová jména na IP adresy (a zpět -- reverzní DNS).
   \item \textbf{AAAA} -- doménové jméno $\to$ IPv6 adresa
   \item \textbf{CNAME} -- alias pro jiné jméno
   \item \textbf{MX} -- poštovní server pro doménu
-  \item \textbf{NS} -- autoritativní name server
+  \item \textbf{NS} (Name Server) -- určuje, který DNS server je autoritativní pro danou doménu;
+    při resolúci TLD server vrátí NS záznam, který říká „pro tuto doménu se ptej tohoto serveru"
   \item \textbf{PTR} -- reverzní lookup (IP $\to$ jméno)
-  \item \textbf{TXT} -- textové záznamy (SPF, DKIM pro e-mail)
+  \item \textbf{TXT} -- libovolný textový záznam; nejčastěji pro e-mailové zabezpečení:
+    \begin{itemize}
+      \item \textbf{SPF} (Sender Policy Framework) -- definuje, které IP adresy smějí odesílat
+        e-maily za danou doménu; přijímající server ověří, zda je odesílatel v seznamu
+      \item \textbf{DKIM} (DomainKeys Identified Mail) -- e-mail je podepsán privátním klíčem
+        domény; přijímající server ověří podpis pomocí veřejného klíče uloženého právě v TXT záznamu
+    \end{itemize}
 \end{itemize}
 
 \paragraph{DNS resoluce}
@@ -176,7 +249,14 @@ Tok zprávy: MUA (odesílatel) $\to$ MTA (odchozí) $\xrightarrow{\text{SMTP}}$ 
 \begin{itemize}
   \item Port 25 (server-to-server), 587 (klient-server s autentizací), 465 (SMTPS)
   \item Zajišťuje \textbf{odesílání} e-mailů z klienta na server a přenos mezi servery
-  \item Příkazy: EHLO, MAIL FROM, RCPT TO, DATA, QUIT
+  \item Příkazy:
+    \begin{itemize}
+      \item \texttt{EHLO} -- pozdrav a identifikace odesílajícího serveru (Extended HELO)
+      \item \texttt{MAIL FROM} -- adresa odesílatele (obálka zprávy)
+      \item \texttt{RCPT TO} -- adresa příjemce; opakuje se pro více příjemců
+      \item \texttt{DATA} -- zahájí přenos těla e-mailu; ukončí se tečkou na samostatném řádku
+      \item \texttt{QUIT} -- ukončení SMTP spojení
+    \end{itemize}
 \end{itemize}
 
 \paragraph{POP3 (Post Office Protocol 3)}
@@ -236,6 +316,8 @@ HTTP je aplikační protokol pro přenos hypertextových dokumentů. Základ web
   \item \textbf{OPTIONS} -- zjištění povolených metod pro daný zdroj
 \end{itemize}
 
+\textbf{Idempotentní metoda} = opakované volání se stejnými parametry vždy vrátí stejný výsledek a nezmění stav serveru opakovaně. Např. \texttt{DELETE /user/5} -- ať zavoláš jednou nebo desetkrát, výsledek je stejný (uživatel je smazán). Naproti tomu \texttt{POST /objednavky} každým voláním vytvoří novou objednávku -- není idempotentní.
+
 \paragraph{HTTP stavové kódy}
 \begin{itemize}
   \item \textbf{1xx} -- informační (100 Continue, 101 Switching Protocols)
@@ -248,9 +330,17 @@ HTTP je aplikační protokol pro přenos hypertextových dokumentů. Základ web
 \paragraph{HTTP verze}
 \begin{itemize}
   \item \textbf{HTTP/1.0} -- každý požadavek = nové TCP spojení
-  \item \textbf{HTTP/1.1} -- persistentní spojení (keep-alive), chunked transfer encoding
-  \item \textbf{HTTP/2} -- multiplexing (více požadavků na jednom spojení), header compression (HPACK), server push
-  \item \textbf{HTTP/3} -- postaveno na QUIC (UDP místo TCP); nižší latence
+  \item \textbf{HTTP/1.1} -- persistentní spojení (keep-alive); \textbf{chunked transfer encoding} --
+    server může posílat odpověď po částech (chuncích), aniž by předem znal celkovou velikost;
+    vhodné pro dynamicky generovaný obsah nebo streaming
+  \item \textbf{HTTP/2} -- jedno TCP spojení, ale přes něj běží více požadavků současně
+    (\textit{multiplexing}) -- odstraňuje problém „head-of-line blocking" z HTTP/1.1;
+    hlavičky jsou komprimovány (HPACK), takže opakující se hlavičky nezabírají zbytečně místo;
+    server může proaktivně poslat zdroje klientovi dříve, než si o ně požádá (\textit{server push})
+  \item \textbf{HTTP/3} -- místo TCP používá \textbf{QUIC} (protokol nad UDP); QUIC řeší
+    hlavní slabinu TCP: při ztrátě paketu v TCP čeká celé spojení, v QUIC je každý stream
+    nezávislý, takže ztráta jednoho paketu nezastaví ostatní; výsledkem je nižší latence,
+    zejména na nestabilních sítích (mobilní připojení)
 \end{itemize}
 
 \subsubsection{HTTPS a TLS}
@@ -269,8 +359,13 @@ HTTP cookie je malý kus dat uložený v prohlížeči a odesílaný s každým 
 \begin{itemize}
   \item \textbf{Expires/Max-Age} -- expirace; bez nich = session cookie (smazán po zavření prohlížeče)
   \item \textbf{Secure} -- odesílán pouze přes HTTPS
-  \item \textbf{HttpOnly} -- nepřístupný JavaScriptu (ochrana před XSS)
-  \item \textbf{SameSite} -- ochrana před CSRF (Strict, Lax, None)
+  \item \textbf{HttpOnly} -- nepřístupný JavaScriptu (ochrana před \textbf{XSS} --
+    Cross-Site Scripting: útočník vloží škodlivý JS kód do stránky, který by jinak mohl
+    cookie přečíst a odeslat na cizí server)
+  \item \textbf{SameSite} -- ochrana před \textbf{CSRF} (Cross-Site Request Forgery: útočník
+    přiměje přihlášeného uživatele, aby nevědomky odeslal požadavek na cizí web -- prohlížeč
+    by jinak cookie automaticky přiložil; SameSite=Strict/Lax cookie nepřiloží u cross-site
+    požadavků); hodnoty: Strict, Lax, None
   \item \textbf{Domain/Path} -- omezení platnosti na doménu/cestu
 \end{itemize}
 
@@ -317,11 +412,17 @@ HTTP je bezstavový protokol -- každý požadavek je nezávislý. Session řeš
 \end{itemize}
 
 \paragraph{REST API}
-Architekturální styl pro návrh distribuovaných systémů:
+Architekturální styl pro návrh distribuovaných systémů -- systémů složených z více samostatných
+komponent (serverů, služeb), které spolu komunikují přes síť. Každá komponenta může běžet
+nezávisle na jiném stroji; REST definuje, jak spolu komunikují přes HTTP.
 \begin{itemize}
-  \item Bezstavovost (statelessness) -- server neukládá stav klienta
-  \item Identifikace zdrojů přes URI
-  \item Využití HTTP metod sémanticky
+  \item Bezstavovost (statelessness) -- server neukládá stav klienta; každý požadavek musí
+    obsahovat vše potřebné (autentizační token apod.)
+  \item Identifikace zdrojů přes URI (např. \texttt{/users/42})
+  \item \textbf{Využití HTTP metod sémanticky} -- každá metoda má jasný význam odpovídající
+    operaci nad zdrojem: \texttt{GET} = čti, \texttt{POST} = vytvoř, \texttt{PUT} = nahraď,
+    \texttt{PATCH} = uprav, \texttt{DELETE} = smaž; díky tomu je API předvídatelné a
+    samodokumentující -- z metody a URI je ihned jasné, co volání dělá
   \item JSON nebo XML jako formát dat
 \end{itemize}
 

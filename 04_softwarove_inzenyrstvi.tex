@@ -68,12 +68,23 @@ Zobrazuje třídy, jejich atributy, metody a vztahy mezi nimi. Základ struktur�
 
 \textbf{Typy vztahů:}
 \begin{itemize}
-  \item \textbf{Asociace} -- obecná vazba; čára mezi třídami; může mít multiplicitu (1, *, 0..1, 1..*)
-  \item \textbf{Agregace} -- slabé vlastnictví (celek/část); část může existovat bez celku; prázdný diamant
-  \item \textbf{Kompozice} -- silné vlastnictví; část nemůže existovat bez celku; plný diamant
-  \item \textbf{Dědičnost (Generalizace)} -- IS-A vztah; prázdná trojúhelníková šipka na nadtřídu
-  \item \textbf{Realizace} -- třída implementuje rozhraní; přerušovaná čára s prázdnou šipkou
-  \item \textbf{Závislost (Dependency)} -- slabá vazba; přerušovaná šipka; $\langle\langle$use$\rangle\rangle$
+  \item \textbf{Asociace} -- obecná vazba; čára mezi třídami; může mít multiplicitu (1, *, 0..1, 1..*) \\
+    \textit{Příklad:} \texttt{Student} --- \texttt{Kurz} (student se zapíše na kurz; oba existují nezávisle na sobě)
+
+  \item \textbf{Agregace} -- slabé vlastnictví (celek/část); část může existovat bez celku; prázdný diamant \\
+    \textit{Příklad:} \texttt{Tým} $\diamond$--- \texttt{Hráč} (hráč patří do týmu, ale když se tým rozpadne, hráč stále existuje)
+
+  \item \textbf{Kompozice} -- silné vlastnictví; část nemůže existovat bez celku; plný diamant \\
+    \textit{Příklad:} \texttt{Objednávka} $\blacklozenge$--- \texttt{PoložkaObjednávky} (položka bez objednávky nedává smysl; zaniká s ní)
+
+  \item \textbf{Dědičnost (Generalizace)} -- IS-A vztah; prázdná trojúhelníková šipka na nadtřídu \\
+    \textit{Příklad:} \texttt{Pes} $\to$ \texttt{Zvíře} (pes IS-A zvíře; dědí atributy \texttt{jmeno}, \texttt{vek})
+
+  \item \textbf{Realizace} -- třída implementuje rozhraní; přerušovaná čára s prázdnou šipkou \\
+    \textit{Příklad:} \texttt{ArrayList} implementuje \texttt{List} (odpovídá \texttt{implements} v Javě / \texttt{:} v C\#)
+
+  \item \textbf{Závislost (Dependency)} -- slabá vazba; přerušovaná šipka; $\langle\langle$use$\rangle\rangle$; třída jen krátkodobě \textit{používá} jinou (jako parametr metody, ne jako atribut) \\
+    \textit{Příklad:} \texttt{FakturaService} $\dashrightarrow$ \texttt{PDFGenerator} (service zavolá generátor jednou při tisku; nedrží ho trvale jako atribut)
 \end{itemize}
 
 \textbf{Viditelnost atributů/metod:}
@@ -171,7 +182,14 @@ Zobrazuje tok řízení a dat v procesu nebo algoritmu. Podobný vývojovému di
   \item \textbf{Aktivita (Action)} -- zaoblený obdélník
   \item \textbf{Rozhodovací uzel (Decision)} -- diamant; podmíněné větvení
   \item \textbf{Fork/Join} -- tučná vodorovná čára; paralelní větve
-  \item \textbf{Swimlanes (plavecké dráhy)} -- oddělení aktivit podle role/zodpovědnosti
+  \item \textbf{Swimlanes (plavecké dráhy)} -- oddělení aktivit podle role/zodpovědnosti;
+    diagram se rozdělí na svislé (nebo vodorovné) pruhy jako plavecký bazén -- každý pruh
+    patří jednomu aktérovi (zákazník, systém, banka) a aktivity v daném pruhu jsou
+    zodpovědností tohoto aktéra. Na první pohled vidíš \textit{kdo co dělá} a kde přechází
+    zodpovědnost z jedné role na druhou.
+    \textit{Příklad:} proces objednávky -- pruh „Zákazník" obsahuje „Vybrat produkt" a
+    „Zaplatit"; pruh „Systém" obsahuje „Ověřit sklad" a „Vystavit fakturu"; pruh „Banka"
+    obsahuje „Autorizovat platbu"
   \item \textbf{Koncový uzel} -- plný kruh s kroužkem
 \end{itemize}
 
@@ -220,6 +238,7 @@ Katalog 23 vzorů (Gang of Four, 1994) je rozdělen do tří skupin.
 
 \paragraph{Singleton}
 Zajistí, že třída má pouze jednu instanci, a poskytne globální přístupový bod.
+\textit{Lidsky:} Konfigurace aplikace -- chceš jedno místo s nastavením, ne deset kopií, které by se mohly lišit.
 \begin{lstlisting}[language=Java, caption=Singleton]
 public class Konfigurace {
     private static Konfigurace instance;
@@ -236,37 +255,46 @@ public class Konfigurace {
 \paragraph{Factory Method}
 Definuje rozhraní pro vytváření objektů, ale nechá podtřídy rozhodnout, které třídy instancovat.
 Odstraní závislost kódu na konkrétních třídách.
+\textit{Lidsky:} Objednáš si „auto" a továrna rozhodne, zda vyrobí Škodu nebo BMW -- ty jen víš, že dostaneš auto, ne jak přesně vzniklo.
 
 \paragraph{Abstract Factory}
 Poskytuje rozhraní pro vytváření rodin příbuzných objektů bez specifikace jejich konkrétních tříd.
 Příklad: GUI toolkity (WindowsButton, MacButton implementují abstraktní Button).
+\textit{Lidsky:} IKEA série -- objednáš celou kolekci nábytku v jednom stylu; přepneš na jiný styl a dostaneš jinou sérii, ale rozhraní zůstane stejné.
 
 \paragraph{Builder}
 Odděluje konstrukci komplexního objektu od jeho reprezentace.
 Vhodné pro objekty s mnoha volitelných parametrů.
+\textit{Lidsky:} Konfigurátor auta na webu -- postupně volíš barvu, motor, výbavu; na konci zavoláš \texttt{build()} a dostaneš hotový objekt. Místo jednoho konstruktoru s 15 parametry.
 
 \paragraph{Prototype}
 Vytváří nové objekty klonováním existujícího.
+\textit{Lidsky:} Ctrl+C, Ctrl+V -- zkopíruješ existující objekt a upravíš jen co potřebuješ, místo vytváření od nuly.
 
 \subsubsection{Strukturální vzory (Structural Patterns)}
 
 \paragraph{Adapter}
 Umožní spolupráci tříd s nekompatibilními rozhraními. Obalí existující třídu novým rozhraním.
 Příklad: adaptér mezi evropskou a americkou zástrčkou.
+\textit{Lidsky:} Cestovní redukce -- máš českou zástrčku, potřebuješ ji zapojit do britské zásuvky; adaptér to přeloží, aniž cokoliv měníš na zástrčce nebo zásuvce.
 
 \paragraph{Facade}
 Poskytne zjednodušené rozhraní ke složitému subsystému.
 Příklad: třída \texttt{Computer} s metodou \texttt{start()}, která skryje inicializaci CPU, RAM, HDD.
+\textit{Lidsky:} Dálkový ovladač TV -- jedním tlačítkem zapneš TV, zesilovač i přijímač; nemusíš vědět, jak každé zařízení funguje uvnitř.
 
 \paragraph{Decorator}
 Dynamicky přidá objektu nové chování bez modifikace jeho třídy. Obalí objekt dekorátorem.
 Příklad: \texttt{BufferedReader} obalí \texttt{FileReader} a přidá bufferování.
+\textit{Lidsky:} Káva s příchutěmi -- začneš s espressem, obalíš ho dekorátorem „+mléko", pak dekorátorem „+šlehačka"; každé obalení přidá vrstvu chování, originální espresso se nemění.
 
 \paragraph{Composite}
 Složí objekty do stromové struktury; klienti s nimi pracují uniformně (jedna metoda pro list i uzel).
+\textit{Lidsky:} Složky v souborovém systému -- složka i soubor mají stejné operace (smazat, přesunout, zobrazit velikost); složka navíc obsahuje další soubory/složky, ale zvenku se chová stejně.
 
 \paragraph{Proxy}
 Zastupuje jiný objekt; řídí přístup k němu. Typy: vzdálený proxy, virtuální proxy, ochranný proxy.
+\textit{Lidsky:} Recepce v hotelu -- nepůjdeš rovnou do skladu, projdeš přes recepci, která ověří oprávnění, zaloguje přístup, nebo zařídí věc za tebe.
 
 \subsubsection{Vzory chování (Behavioral Patterns)}
 
@@ -290,15 +318,19 @@ class PredmetPozorovani {
 \paragraph{Strategy (Strategie)}
 Definuje rodinu algoritmů, zapouzdří je a umožní jejich záměnu.
 Příklad: různé způsoby řazení (BubbleSort, QuickSort) implementující rozhraní \texttt{SortStrategy}.
+\textit{Lidsky:} GPS navigace -- zadáš cíl a vyberáš strategii: nejrychlejší trasa, nejkratší, bez dálnic; cíl je stejný, algoritmus výpočtu se zamění za běhu.
 
 \paragraph{Command (Příkaz)}
 Zapouzdří požadavek jako objekt; podporuje undo/redo, logování, fronta příkazů.
+\textit{Lidsky:} Ctrl+Z v textovém editoru -- každá akce (napsání slova, smazání) je objekt uložený v historii; undo jen vezme poslední příkaz a zavolá \texttt{undo()}.
 
 \paragraph{Template Method}
 Definuje kostru algoritmu v základní třídě a nechá podtřídy doplnit konkrétní kroky.
+\textit{Lidsky:} Recept na pizzu -- vždy: připrav těsto $\to$ přidej ingredience $\to$ upeč; co jsou za ingredience rozhoduje konkrétní podtřída (Margherita, Hawai). Kostra je v abstraktní třídě, detaily v podtřídách -- tedy ano, je to v podstatě abstraktní třída s háčky pro podtřídy.
 
 \paragraph{Iterator}
 Poskytne sekvenční přístup k prvkům kolekce bez odhalení její interní struktury.
+\textit{Lidsky:} Přesně tak -- je to v podstatě \texttt{for-each} cyklus. Jedno rozhraní (\texttt{hasNext()}, \texttt{next()}) funguje stejně pro seznam, strom, frontu nebo databázový kurzor; nemusíš vědět, jak je kolekce uložená uvnitř.
 
 %=============================================================================
 \subsection{Metodiky vývoje IS}
@@ -331,14 +363,39 @@ Nejrozšířenější agilní rámec.
 \end{itemize}
 
 \paragraph{Crystal}
-Rodina metodik (Crystal Clear, Yellow, Orange, Red) přizpůsobená velikosti a kritičnosti projektu.
+Rodina metodik vytvořená Alistairen Cockburnem. Základní myšlenka: \textbf{neexistuje jedna metodika pro všechny} -- malý tým na nekritické aplikaci nepotřebuje stejně těžký proces jako 50 lidí vyvíjejících letecký software. Crystal proto nabízí více variant lišících se „tíhou" procesu podle dvou os:
 \begin{itemize}
-  \item Crystal Clear: 6--8 lidí, nekritické systémy
-  \item Principy: přímá komunikace, reflexe, osmotická komunikace
+  \item \textbf{Velikost týmu} -- čím víc lidí, tím více formální komunikace a dokumentace je potřeba
+  \item \textbf{Kritičnost systému} -- co se stane, když selže? (ztráta pohodlí / peněz / zdraví / života)
 \end{itemize}
+
+\textbf{Varianty podle barvy} (barva = přibližný počet členů týmu):
+\begin{itemize}
+  \item \textbf{Crystal Clear} -- 1--6 lidí; nekritické systémy; minimální proces, maximální svoboda
+  \item \textbf{Crystal Yellow} -- 7--20 lidí
+  \item \textbf{Crystal Orange} -- 21--40 lidí; více dokumentace a koordinace
+  \item \textbf{Crystal Red} -- 41--80 lidí; nejtěžší varianta
+\end{itemize}
+
+\textbf{Klíčové principy Crystal:}
+\begin{itemize}
+  \item \textbf{Osmotická komunikace} -- tým sedí fyzicky pohromadě; informace se šíří přirozeně jako osmóza -- „uslyšíš" kolegu řešit problém a automaticky vstřebáš kontext, aniž by se konala formální schůzka. Opak je tým rozptýlený po světě, kde musíš vše aktivně komunikovat.
+  \item \textbf{Přímá komunikace} -- osobní rozhovor je preferován před e-mailem nebo ticketem
+  \item \textbf{Reflexe} -- tým se pravidelně zastavuje a přemýšlí, co zlepšit (podobné Scrum Retrospective)
+  \item \textbf{Osobní bezpečí} -- každý se může vyjádřit bez strachu z postihu; předpoklad pro otevřenou komunikaci
+  \item \textbf{Časté dodávky} -- pravidelné verze funkčního softwaru reálným uživatelům
+\end{itemize}
+
+\textbf{Crystal vs. Scrum:} Scrum předpisuje konkrétní role (PO, SM) a ceremonie (Daily, Review\ldots); Crystal říká -- zjistěte, co funguje pro váš tým, a dělejte to. Je méně strukturovaný, více lidsky orientovaný.
 
 \paragraph{DSDM (Dynamic Systems Development Method)}
 Iterativní a inkrementální metodika; fixuje čas a náklady, variabilní je rozsah (MoSCoW prioritizace).
+
+\textbf{Iterativní} = software se vyvíjí v opakujících se cyklech (iteracích); v každé iteraci se vezme část požadavků, navrhne se, implementuje a otestuje. Na konci iterace se dostane zpětná vazba a příští iterace se podle ní upraví. Nejde rovnou od A do Z -- jde se dokola a každým kolem se produkt zpřesňuje.
+
+\textbf{Inkrementální} = každá iterace přidá nový fungující kus (inkrement) do produktu. Po první iteraci máš základní verzi, po druhé o něco více, po třetí ještě více -- jako stavění z kostek. Uživatel může používat produkt dřív, než je „hotový".
+
+\textit{Rozdíl od vodopádu:} vodopád je ani iterativní ani inkrementální -- nejdřív celá analýza, pak celý návrh, pak celá implementace; uživatel vidí výsledek až úplně na konci. DSDM dodává funkční software průběžně.
 \begin{itemize}
   \item \textbf{MoSCoW:} Must have, Should have, Could have, Won't have
   \item Fáze: Pre-project, Feasibility, Foundation, Exploration, Engineering, Deployment
@@ -347,8 +404,17 @@ Iterativní a inkrementální metodika; fixuje čas a náklady, variabilní je r
 \paragraph{ASD (Adaptive Software Development)}
 \begin{itemize}
   \item Cyklus: Speculate (plánování) $\to$ Collaborate (vývoj) $\to$ Learn (hodnocení)
-  \item Zaměřen na vysoce turbulentní prostředí
+  \item Zaměřen na vysoce turbulentní prostředí -- projekty, kde se požadavky mění rychleji, než stihneš plánovat
 \end{itemize}
+
+\textbf{Příklad -- vývoj mobilní aplikace pro startupem měnící strategii:}
+\begin{itemize}
+  \item \textbf{Speculate:} Tým odhadne, co by mohlo fungovat pro příštích 3 týdny -- ne pevný plán, ale hypotéza. Startup řekne „zkusme push notifikace a doporučování obsahu". Záměrně se říká \textit{speculate} (spekulovat), ne \textit{plan} -- přiznáváme, že nevíme přesně co bude potřeba.
+  \item \textbf{Collaborate:} Tým spolupracuje na implementaci; sdílení znalostí, žádné sila -- každý ví co dělá ostatní.
+  \item \textbf{Learn:} Po dodávce se vyhodnotí co fungovalo a co ne. Startup zjistí, že notifikace uživatele otravují -- toto poznání vstoupí do dalšího kola \textit{Speculate}. Cyklus se opakuje.
+\end{itemize}
+
+Klíčový rozdíl od Scrumu: ASD nepředstírá, že lze přesně plánovat -- staví na tom, že \textbf{změna je normální stav}, ne výjimka.
 
 \paragraph{Lean Software Development}
 Přenesení principů Lean manufacturingu do SW vývoje (Toyota Production System):
@@ -361,6 +427,17 @@ Přenesení principů Lean manufacturingu do SW vývoje (Toyota Production Syste
   \item Vývoj řízený funkcemi (features); iterace 2 týdny
   \item 5 aktivit: Develop Overall Model, Build Feature List, Plan by Feature, Design by Feature, Build by Feature
 \end{itemize}
+
+\textbf{Příklad -- e-shop:}
+\begin{itemize}
+  \item \textbf{Develop Overall Model:} Tým vytvoří celkový přehled systému -- třídy jako \texttt{Zákazník}, \texttt{Objednávka}, \texttt{Produkt}, jejich vztahy. Ne detailní návrh, jen doménový model.
+  \item \textbf{Build Feature List:} Ze systému se vypíše seznam konkrétních funkcí ve formátu \textit{„akce výsledku objektem"}: „zobrazit detail produktu", „přidat produkt do košíku", „odeslat potvrzovací e-mail". Každá funkce = max 2 týdny práce.
+  \item \textbf{Plan by Feature:} Funkce se seřadí podle priority a přiřadí vývojářům: „přidat do košíku" má vyšší prioritu než „zobrazit historii objednávek".
+  \item \textbf{Design by Feature:} Pro každou funkci se navrhne detailní řešení -- sekvenční diagram, třídy.
+  \item \textbf{Build by Feature:} Implementace, unit testy, code review, integrace. Po dvou týdnech je funkce hotová a fungující.
+\end{itemize}
+
+Výsledkem je, že zákazník vidí průběžně přibývající konkrétní funkce, ne abstraktní „procenta hotovosti".
 
 \paragraph{XP (Extreme Programming)}
 Agilní metodika s důrazem na technické praktiky:
@@ -402,17 +479,47 @@ Architektonické vzory popisují strukturu celého systému na vysoké úrovni:
 \begin{itemize}
   \item \textbf{Vrstvená architektura (Layers)} -- systém rozdělen do horizontálních vrstev;
     každá vrstva poskytuje služby vrstvě nad ní (UI $\to$ Business Logic $\to$ Data Access $\to$ DB);
-    výhoda: oddělení zodpovědností, snadná výměna vrstvy
+    výhoda: oddělení zodpovědností, snadná výměna vrstvy. \\
+    \textit{Příklad:} Typická webová aplikace -- React (UI) volá Spring Boot kontroler (Business Logic),
+    který přes JPA repozitář (Data Access) čte z PostgreSQL (DB). Chceš vyměnit DB za MySQL?
+    Stačí změnit Data Access vrstvu, UI se nedotkneš.
+
   \item \textbf{Pipes and Filters} -- data procházejí sekvencí filtrů (transformací) propojených rourami;
-    příklady: Unix pipeline, ETL procesy, kompilátory
+    výstup jednoho filtru je vstupem dalšího. \\
+    \textit{Příklad:} Unix pipeline \texttt{cat log.txt | grep ERROR | sort | uniq -c} --
+    každý příkaz je filtr, roura \texttt{|} je pipe. Nebo ETL proces:
+    Extrahuj data z CSV $\to$ Odstraň duplicity $\to$ Převeď formát dat $\to$ Načti do DB.
+
   \item \textbf{Shared Repository (Blackboard)} -- komponenty sdílejí společné datové úložiště;
-    vhodné pro komplexní problémy řešené více spolupracujícími komponentami; příklad: IDE (editor, compiler, debugger)
-  \item \textbf{MVC (Model-View-Controller)} -- oddělení dat (Model), prezentace (View) a logiky (Controller);
-    Model notifikuje View o změnách (Observer pattern); příklady: Spring MVC, Ruby on Rails, ASP.NET MVC
-  \item \textbf{Klient-Server} -- server poskytuje zdroje/služby; klient o ně žádá; příklady: web (HTTP), e-mail (SMTP)
-  \item \textbf{Peer-to-Peer (P2P)} -- každý uzel je současně klient i server; příklady: BitTorrent, blockchain
-  \item \textbf{Event-driven} -- komponenty komunikují přes události (events); volná vazba;
-    příklady: GUI aplikace, microservices s message brokery (Kafka, RabbitMQ)
+    každá čte a zapisuje do společné „tabule"; vhodné pro komplexní problémy řešené více
+    spolupracujícími komponentami. \\
+    \textit{Příklad:} IDE -- editor zapíše zdrojový kód do úložiště, kompilátor ho přečte a
+    zapíše AST, debugger přečte AST a nabídne breakpointy; všechny komponenty sdílejí
+    stejná data, ale nevědí o sobě navzájem.
+
+  \item \textbf{MVC (Model-View-Controller)} -- oddělení dat (Model), prezentace (View) a
+    logiky (Controller); Model notifikuje View o změnách (Observer pattern). \\
+    \textit{Příklad:} E-shop v ASP.NET -- \texttt{ProduktModel} obsahuje data o produktu,
+    \texttt{ProduktController} zpracuje HTTP požadavek a rozhodne co se stane,
+    \texttt{ProduktView} (Razor šablona) zobrazí HTML. Změníš šablonu bez dotyku databázové logiky.
+
+  \item \textbf{Klient-Server} -- server poskytuje zdroje/služby; klient o ně žádá přes síť;
+    server obsluhuje více klientů najednou. \\
+    \textit{Příklad:} Prohlížeč (klient) pošle HTTP GET na \texttt{google.com};
+    server zpracuje požadavek a vrátí HTML. Nebo Outlook (klient) se připojí na Exchange server
+    přes IMAP a stáhne e-maily.
+
+  \item \textbf{Peer-to-Peer (P2P)} -- každý uzel je současně klient i server; není centrální autorita;
+    odolné vůči výpadkům. \\
+    \textit{Příklad:} BitTorrent -- stahující počítač zároveň nabízí již stažené části ostatním;
+    čím více lidí stahuje, tím rychleji to jde. Nebo Bitcoin -- každý uzel drží kopii blockchainu
+    a validuje transakce; neexistuje centrální banka.
+
+  \item \textbf{Event-driven} -- komponenty komunikují přes události (events); producent událost
+    vydá, konzument na ni reaguje; producent neví kdo poslouchá -- volná vazba. \\
+    \textit{Příklad:} E-shop -- po dokončení objednávky se vydá událost \texttt{ObjednavkaVytvorena};
+    na ni nezávisle reagují: služba pro e-mail (pošle potvrzení), služba pro sklad (odečte zboží),
+    služba pro účetnictví (vystaví fakturu). Přidáš novou službu bez změny ostatních.
 \end{itemize}
 
 \subsubsection{CMMI (Capability Maturity Model Integration)}
@@ -426,6 +533,29 @@ Definuje 5 úrovní zralosti:
   \item \textbf{Defined (Definovaný)} -- procesy standardizované na úrovni organizace; popsány v procesním modelu
   \item \textbf{Quantitatively Managed (Kvantitativně řízený)} -- procesy měřeny a statisticky řízeny; předvídatelnost
   \item \textbf{Optimizing (Optimalizující)} -- kontinuální zlepšování procesů; inovace; prevence defektů
+\end{enumerate}
+
+\textbf{Příklad -- softwarová agentura vyvíjející zakázkový software:}
+\begin{enumerate}
+  \item \textbf{Level 1 -- Initial:} Malá agentura, 5 vývojářů. Každý projekt běží jinak podle toho,
+    kdo ho vede. Jeden senior všechno drží v hlavě, termíny se odhadují od oka, testování se dělá
+    „až bude čas". Projekt dopadne dobře, když je na něm správný člověk -- jinak chaos.
+
+  \item \textbf{Level 2 -- Managed:} Agentura zavede základní projektové řízení. Každý projekt má
+    Jira board, odhady v story pointech, pravidelný status report klientovi. Stále se procesy liší
+    projekt od projektu, ale aspoň jsou řízené.
+
+  \item \textbf{Level 3 -- Defined:} Agentura sepíše firemní „playbook" -- jak vypadá každý projekt:
+    šablona pro analýzu, povinný code review, definovaný deployment proces, onboarding nováčků.
+    Nový vývojář nastoupí a ví přesně co dělat -- nezávisí na tom, kdo mu co řekne.
+
+  \item \textbf{Level 4 -- Quantitatively Managed:} Agentura měří: průměrná hustota bugů na 1000
+    řádků kódu, průměrné překročení odhadů, velocity týmu. Na základě dat předvídá, zda projekt
+    doručí včas, a umí říct klientovi „na základě historických dat dodáme za 6 týdnů $\pm$ 1 týden".
+
+  \item \textbf{Level 5 -- Optimizing:} Agentura automaticky analyzuje data z projektů, hledá
+    vzorce (např. „bugy vznikají nejvíce v pátek odpoledne před releasem") a aktivně mění procesy.
+    Zavede například povinné freeze na nové funkce 2 dny před releasem. Procesy se zlepšují samy.
 \end{enumerate}
 
 %=============================================================================
@@ -447,7 +577,9 @@ Definuje 5 úrovní zralosti:
 \textbf{Proč SQA záleží v praxi:}
 \begin{itemize}
   \item Chyba nalezená při \textbf{code review} stojí hodiny práce
-  \item Chyba nalezená při \textbf{testování} stojí dny práce (oprava + regrese)
+  \item Chyba nalezená při \textbf{testování} stojí dny práce (oprava + regrese -- po opravě
+    chyby musíš znovu otestovat vše ostatní, protože oprava jedné věci může nechtěně rozbít
+    jinou; tomuto zpětnému prověření se říká \textit{regresní testování})
   \item Chyba nalezená \textbf{zákazníkem v produkci} stojí týdny + poškozená reputace
   \item Příklad: Boeing 737 MAX -- chyba MCAS softwaru; NASA Mars Climate Orbiter -- chyba jednotek (imperial vs. metric)
 \end{itemize}
@@ -554,10 +686,23 @@ Deploy (produkce) & -- & Pouze pokud vše prošlo \\
   \item \textbf{Technický dluh (Technical Debt)} -- množství práce potřebné k uvedení kódu do ideálního stavu;
     měří ho SonarQube v hodinách/dnech
   \item \textbf{Cyklomatická složitost} -- počet nezávislých cest kódem; hodnota $>$10 signalizuje
-    příliš složitou metodu, která by se měla rozdělit
+    příliš složitou metodu, která by se měla rozdělit. \\
+    \textbf{Jak se měří:} spočítáš větvení v kódu -- každý \texttt{if}, \texttt{else}, \texttt{for},
+    \texttt{while}, \texttt{case}, \texttt{\&\&}, \texttt{||} přidá 1. Výsledek = počet větví + 1.
+    Metoda bez jediného větvení má složitost 1 (jedna cesta). Metoda s pěti \texttt{if} bloky
+    má složitost 6. \\
+    \textit{Příklad:} metoda, která ověří přihlášení -- zkontroluje zda uživatel existuje,
+    zda není blokovaný, zda heslo souhlasí, zda nevypršela session -- to jsou 4 větve,
+    složitost = 5. Snadno testovatelné. Metoda se složitostí 20 má 20 různých průchodů --
+    musíš napsat 20 unit testů jen pro ni, což signalizuje, že ji máš rozdělit.
+
   \item \textbf{MTTR (Mean Time to Repair)} -- průměrná doba od detekce incidentu po jeho vyřešení;
     klíčová metrika DevOps týmů
-  \item \textbf{Defect density} -- počet bugů na 1000 řádků kódu (KLOC); benchmark: $<$1 bug/KLOC
+
+  \item \textbf{Defect density} -- počet bugů na 1000 řádků kódu (KLOC); benchmark: $<$1 bug/KLOC. \\
+    \textbf{KLOC} = Kilo Lines of Code = 1000 řádků kódu; slouží jako normalizační jednotka --
+    projekt s 50\,000 řádky a 30 bugy má defect density $30 / 50 = 0{,}6$ bug/KLOC, což je pod
+    benchmarkem a považuje se za dobré. Srovnáváš tak různě velké projekty nebo moduly spravedlivě.
 \end{itemize}
 
 \begin{profesorbox}[Otázky profesorů k tématu: Softwarové inženýrství]

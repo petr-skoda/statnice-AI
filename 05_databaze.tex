@@ -46,10 +46,37 @@ báze dat (SŘBD)}. Běžně se označením databáze myslí jak uložená data,
 
   \item \textbf{Specializované databáze}:
     \begin{itemize}
-      \item \textit{Graph Databases} -- neo4j; grafové struktury pro modelování sítí
-      \item \textit{Key-Value} -- Redis, Memcached; jedna hodnota pro daný klíč (cache)
-      \item \textit{Time-series} -- optimalizované pro časové řady dat
-      \item \textit{Sloupcové} -- Cassandra, HBase; data ukládána po sloupcích
+      \item \textit{Graph Databases} -- neo4j; data jsou uložena jako \textbf{uzly} (entity) a
+        \textbf{hrany} (vztahy mezi nimi); ideální pro situace, kde jsou vztahy stejně důležité
+        jako data samotná. \\
+        \textit{Příklad:} sociální síť -- každý uživatel je uzel, přátelství je hrana.
+        Dotaz „najdi všechny přátele přátel Jana, kteří mají zájem o filmy" je v grafové DB
+        přirozený a rychlý; v relační DB by vyžadoval složité joiny přes vazební tabulky.
+        Další využití: detekce podvodů, doporučovací systémy (Spotify, Netflix).
+
+      \item \textit{Key-Value} -- Redis, Memcached; funguje jako obrovský \textbf{slovník (hashmap)}
+        -- ke každému klíči patří jedna hodnota; vše je typicky v paměti (RAM) $\to$ extrémně rychlé. \\
+        \textit{Příklad:} ukládání session přihlášeného uživatele:
+        klíč = \texttt{session:abc123}, hodnota = \texttt{\{user\_id: 42, role: "admin"\}}.
+        Při každém HTTP požadavku se session načte z Redis za zlomek milisekundy místo dotazu do DB.
+        Využití: cache, session management, rate limiting, fronty.
+
+      \item \textit{Time-series} -- optimalizované pro \textbf{časové řady} -- data, která přicházejí
+        průběžně s časovou značkou a typicky se nikdy nemění, jen přibývají.
+        Příklady: InfluxDB, Prometheus, TimescaleDB. \\
+        \textit{Příklad:} monitoring serveru -- každou sekundu se zapíše
+        \texttt{(timestamp, cpu=72\%, ram=4GB, disk\_io=120MB/s)}.
+        Za den to jsou desetitisíce záznamů. Time-series DB je optimalizována pro dotazy jako
+        „zobraz průměrné CPU za posledních 6 hodin po minutách" -- v relační DB by to bylo pomalé.
+        Další využití: IoT senzory, burzovní kurzy, telemetrie.
+
+      \item \textit{Sloupcové (Column-family)} -- Cassandra, HBase; místo ukládání dat
+        \textbf{po řádcích} ukládají data \textbf{po sloupcích}; při analytickém dotazu na jeden
+        sloupec přes miliony řádků nemusí číst ostatní sloupce $\to$ rychlejší analytika. \\
+        \textit{Příklad:} e-shop s miliony objednávek; dotaz „jaký byl celkový obrat za každý měsíc"
+        potřebuje jen sloupec \texttt{castka} a \texttt{datum} -- sloupcová DB přečte jen tyto dva
+        sloupce, relační DB by četla celé řádky včetně jména zákazníka, adresy atd.
+        Využití: datové sklady, big data analytika.
     \end{itemize}
 \end{enumerate}
 
@@ -76,6 +103,13 @@ Důvody pro vznik databázových systémů:
 
 Návrh databáze vychází z principu tří architektur (\textbf{P3A}). Smyslem P3A je postupně upřesňovat
 datový model tak, aby zcela odpovídal požadavkům využívané databázové technologie.
+
+\textbf{Tři úrovně lidsky:} Představ si, že stavíš dům.
+\begin{itemize}
+  \item \textbf{Konceptuální} = rozhovor s architektem: „chci obývací pokoj, ložnici, kuchyň a koupelnu, ložnice musí být blízko koupelny". Žádné rozměry, žádné materiály -- jen co potřebuješ a jak to spolu souvisí. V databázi: entity (Zákazník, Objednávka) a jejich vztahy -- bez datových typů, bez konkrétní databáze.
+  \item \textbf{Logický} = technický výkres: místnosti mají rozměry, jsou nakreslené dveře a okna, ale stále bez konkrétního materiálu. V databázi: tabulky, sloupce, primární a cizí klíče, datové typy (INT, VARCHAR) -- ale stále nezávislé na tom, zda použiješ Oracle nebo PostgreSQL.
+  \item \textbf{Fyzický} = stavební plán: přesný materiál, způsob pokládky, výrobce oken. V databázi: konkrétní SQL skripty pro daný DBMS, indexy, partitioning, optimalizace výkonu.
+\end{itemize}
 
 \textit{Příklad prolínající se všemi třemi úrovněmi: systém e-shopu (zákazníci, objednávky, produkty).}
 
@@ -215,9 +249,21 @@ Každá normální forma buduje na předchozí -- pokud je tabulka v 3NF, je aut
 \end{itemize}
 
 %--- 1NF ---
+\textbf{Přehled normálních forem:}
+\begin{itemize}
+  \item \textbf{UNF} (Unnormalized Form) -- nenormalizovaná databáze; žádná pravidla
+  \item \textbf{0NF} -- alespoň jeden atribut obsahuje více než jednu hodnotu
+  \item \textbf{1NF} -- každý atribut obsahuje pouze atomické (nedělitelné) hodnoty
+  \item \textbf{2NF} -- každý neklíčový atribut je plně závislý na každém kandidátním klíči
+    (neklíčový atribut = atribut, který není součástí žádného kandidátního klíče)
+  \item \textbf{3NF} -- všechny neklíčové atributy musí být vzájemně nezávislé
+  \item \textbf{BCNF} -- atributy, které jsou součástí primárního klíče, musí být vzájemně nezávislé
+  \item \textbf{4NF} -- relace popisuje pouze příčinnou souvislost mezi klíčem a atributy
+  \item \textbf{5NF} -- relaci již není možno bezztrátově rozložit
+\end{itemize}
+
 \paragraph{1. normální forma (1NF)}
-\textbf{Pravidlo:} Každá buňka tabulky obsahuje právě jednu \textit{atomickou} (nedělitelnou) hodnotu.
-Neexistují opakující se skupiny atributů ani seznamy hodnot v jedné buňce.
+\textbf{Pravidlo:} Každý atribut obsahuje pouze atomické (nedělitelné) hodnoty -- žádné seznamy ani opakující se skupiny v jedné buňce.
 
 \smallskip
 \textit{Porušení -- seznam hodnot v buňce:}
@@ -258,7 +304,7 @@ id\_zam & jmeno & telefony \\
 
 %--- 2NF ---
 \paragraph{2. normální forma (2NF)}
-\textbf{Pravidlo:} Je v 1NF a každý neklíčový atribut závisí na \textit{celém} složeném PK, ne jen na jeho části.
+\textbf{Pravidlo:} Je v 1NF a každý neklíčový atribut je plně závislý na každém kandidátním klíči -- nesmí záviset jen na části složeného klíče.
 (Relevantní pouze pro tabulky se složeným primárním klíčem.)
 
 \smallskip
@@ -303,7 +349,7 @@ Problém: ``Kniha Java'' se opakuje -- změna názvu vyžaduje UPDATE na více �
 
 %--- 3NF ---
 \paragraph{3. normální forma (3NF)}
-\textbf{Pravidlo:} Je v 2NF a neexistuje \textit{tranzitivní závislost} neklíčového atributu na PK.
+\textbf{Pravidlo:} Je v 2NF a všechny neklíčové atributy musí být vzájemně nezávislé -- nesmí existovat tranzitivní závislost neklíčového atributu přes jiný neklíčový atribut.
 
 \medskip
 \begin{tcolorbox}[colback=yellow!15, colframe=orange!60, title=Co je tranzitivní závislost?]
@@ -364,8 +410,7 @@ Přestěhování IT: jediný UPDATE v ODDELENI, žádná redundance.
 
 %--- BCNF ---
 \paragraph{Boyce-Coddova normální forma (BCNF)}
-\textbf{Pravidlo:} Je v 3NF a pro každou netriviální funkční závislost $X \to Y$ musí být $X$
-nadmnožinou \textit{kandidátního klíče} (superklíč). BCNF je přísnější než 3NF.
+\textbf{Pravidlo:} Je v 3NF a atributy, které jsou součástí primárního klíče, musí být vzájemně nezávislé. Formálně: pro každou netriviální funkční závislost $X \to Y$ musí být $X$ superklíčem. BCNF je přísnější než 3NF.
 
 \smallskip
 \textit{Porušení -- klasický příklad: rozvrh výuky.}
@@ -410,7 +455,7 @@ Novák & Ing.~Vojíř \\
 
 %--- 4NF ---
 \paragraph{4. normální forma (4NF)}
-\textbf{Pravidlo:} Je v BCNF a neobsahuje netriviální \textit{vícehodnotové závislosti} (MVD).
+\textbf{Pravidlo:} Je v BCNF a relace popisuje pouze příčinnou souvislost mezi klíčem a atributy -- neobsahuje netriviální vícehodnotové závislosti (MVD), kdy jeden klíč určuje dvě nezávislé sady hodnot.
 
 Vícehodnotová závislost $A \twoheadrightarrow B$ nastane, když jeden atribut $A$ určuje \textbf{nezávislou sadu}
 hodnot $B$ bez ohledu na ostatní atributy.
@@ -458,8 +503,7 @@ přidání nové dovednosti (Python) vyžaduje vložit 2 nové řádky (Python+I
 
 %--- 5NF ---
 \paragraph{5. normální forma (5NF -- PJNF)}
-\textbf{Pravidlo:} Je v 4NF a neobsahuje závislosti spojení (\textit{join dependency}) které nelze odvodit
-z kandidátních klíčů. Tabulka je v 5NF tehdy, když ji \textbf{nelze bezztrátově rozložit} na menší tabulky.
+\textbf{Pravidlo:} Je v 4NF a relaci již není možno bezztrátově rozložit -- neobsahuje závislosti spojení (\textit{join dependency}), které nelze odvodit z kandidátních klíčů.
 
 5NF se uplatňuje u tříciferných (a vícenásobných) vztahů, kde ternární vazbu \textbf{nelze}
 nahradit binárními vztahy bez ztráty informace.
@@ -527,7 +571,46 @@ NoSQL systémy upřednostňují dostupnost nad konzistencí (CAP teorém):
   \item \textbf{Dirty read} -- čtení nepotvrzených dat jiné transakce
   \item \textbf{Non-repeatable read} -- opakované čtení vrátí různé hodnoty (jiná transakce mezitím změnila)
   \item \textbf{Phantom read} -- dotaz vrátí jiné řádky při opakování (jiná transakce vložila/smazala)
-  \item \textbf{Izolační úrovně:} READ UNCOMMITTED $<$ READ COMMITTED $<$ REPEATABLE READ $<$ SERIALIZABLE
+  \item \textbf{Izolační úrovně} určují, jak moc je jedna transakce „odstíněna" od změn, které
+    dělají jiné souběžné transakce. Čím vyšší úroveň, tím více izolace a tím méně problémů --
+    ale také nižší výkon (více zamykání). Škála od nejvolnější po nejpřísnější:
+
+    \begin{itemize}
+      \item \textbf{READ UNCOMMITTED} -- nejvolnější; transakce vidí i \textit{nepotvrzená} data
+        jiné transakce. \\
+        \textit{Příklad:} banka převádí 1000 Kč z účtu A na B; uprostřed převodu (peníze odečteny
+        z A, ale ještě nepřipsány na B) přijde jiná transakce a vidí dočasně „ztracených" 1000 Kč.
+        Toto je \textit{dirty read} -- čtení dat, která možná nikdy nebudou potvrzena.
+
+      \item \textbf{READ COMMITTED} -- transakce vidí pouze \textit{potvrzená} data; dirty read
+        nehrozí. Nejčastější výchozí úroveň (PostgreSQL, Oracle, MS SQL Server). \\
+        \textit{Příklad:} při dvou čteních ve stejné transakci může mezitím jiná transakce
+        data změnit a potvrdit -- druhé čtení vrátí jinou hodnotu (\textit{non-repeatable read}).
+
+      \item \textbf{REPEATABLE READ} -- zaručuje, že pokud jednou přečteš řádek, přečteš ho
+        stejně i podruhé ve stejné transakci; jiná transakce ho mezitím nemůže změnit. \\
+        \textit{Příklad:} stále však může jiná transakce \textit{vložit nový řádek} -- při
+        opakování dotazu se mohou objevit nové záznamy (\textit{phantom read}).
+
+      \item \textbf{SERIALIZABLE} -- nejpřísnější; transakce se chovají, jako by běžely přísně
+        jedna po druhé (sériově), i když fyzicky běží paralelně; žádný dirty read, non-repeatable
+        read ani phantom read. Platí za to výkonem -- více zamykání, možné uváznutí. \\
+        \textit{Použití:} bankovní převody, rezervační systémy -- kdekoli je správnost dat
+        důležitější než rychlost.
+    \end{itemize}
+
+    \begin{center}
+    \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Úroveň} & \textbf{Dirty read} & \textbf{Non-rep. read} & \textbf{Phantom read} & \textbf{Výkon} \\
+    \midrule
+    READ UNCOMMITTED & možný   & možný   & možný   & nejvyšší \\
+    READ COMMITTED   & ne      & možný   & možný   & vysoký \\
+    REPEATABLE READ  & ne      & ne      & možný   & střední \\
+    SERIALIZABLE     & ne      & ne      & ne      & nejnižší \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
 \end{itemize}
 
 \paragraph{Uváznutí (Deadlock)}
@@ -723,11 +806,27 @@ Povinnost & NOT NULL pro FK \\
 \subsubsection{Modely databázových systémů}
 
 \begin{itemize}
-  \item \textbf{Hierarchický model} -- stromová struktura; vztah rodič/potomek; obtížné vkládání a rušení
-  \item \textbf{Síťový model} -- zobecnění hierarchického; vícenásobné vztahy (sety)
-  \item \textbf{Relační model} -- Dr. Codd 1970; data v tabulkách (řádky/sloupce); nejčastěji používaný
-  \item \textbf{Objektově-orientované DBS} -- data jako objekty; OID, zapouzdření, dědičnost, polymorfismus
+  \item \textbf{Hierarchický model} -- stromová struktura; vztah rodič/potomek; uzel má právě jednoho rodiče; obtížné vkládání a rušení. \\
+    \textit{Příklad:} organizační struktura firmy -- Firma $\to$ Oddělení $\to$ Zaměstnanec; nebo souborový systém (disk $\to$ složka $\to$ soubor). Historicky IBM IMS (1960s). Problém: zaměstnanec nemůže patřit do dvou oddělení -- hierarchie to neumožňuje.
+
+  \item \textbf{Síťový model} -- zobecnění hierarchického; uzel může mít \textit{více rodičů}; vícenásobné vztahy (sety). \\
+    \textit{Příklad:} kusovník (bill of materials) -- součástka může být součástí více výrobků zároveň; nebo student zapsaný do více kurzů. Standard CODASYL (1970s), databáze IDMS. Flexibilnější než hierarchický, ale složitá navigace.
+
+  \item \textbf{Relační model} -- Dr. Codd 1970; data v tabulkách (řádky/sloupce); vztahy přes cizí klíče; nejčastěji používaný. \\
+    \textit{Příklad:} prakticky vše -- e-shopy, bankovnictví, ERP systémy. MySQL, PostgreSQL, Oracle, MS SQL Server. Výhoda: flexibilní dotazy přes SQL, silná teorie (normální formy, transakce ACID).
+
+  \item \textbf{Objektově-orientované DBS (OODBS)} -- data jako objekty se stavem (atributy) a chováním (metody); OID (unikátní identifikátor objektu), zapouzdření, dědičnost, polymorfismus. \\
+    \textit{Příklad:} CAD/CAM systémy (komplexní geometrické objekty), multimediální databáze, vědecké aplikace kde objekty mají složitou strukturu (DNA sekvence). db4o, ObjectDB. V praxi méně rozšířené -- většina aplikací používá relační DB s ORM.
 \end{itemize}
+
+\paragraph{Princip tří architektur (P3A)}
+Klíčový pojem z otázek profesorů. P3A říká, že každý databázový systém lze popsat na třech úrovních abstrakce -- od pohledu uživatele až po fyzické uložení na disku:
+\begin{enumerate}
+  \item \textbf{Konceptuální} (co systém eviduje) -- entity, vztahy, omezení; nezávislé na technologii; ER diagram
+  \item \textbf{Logická} (jak to uložíme) -- tabulky, sloupce, PK/FK, normalizace; nezávislé na konkrétním DBMS
+  \item \textbf{Fyzická} (jak to nasadíme) -- DDL skripty, indexy, partitioning; specifické pro daný DBMS
+\end{enumerate}
+Smyslem P3A je \textbf{oddělení zodpovědností}: analytik pracuje na konceptuální úrovni se zákazníkem, databázový návrhář na logické, DBA na fyzické. Změna fyzického uložení (přechod z Oracle na PostgreSQL) neovlivní konceptuální model.
 
 \begin{profesorbox}[Otázky profesorů k tématu: Datové modelování]
 \textbf{Řepa Václav, prof. Ing., CSc.}
@@ -827,6 +926,13 @@ Rozšíření SQL vyhledávání:
     skryje složitost joinu; \texttt{CREATE VIEW aktivni\_zam AS SELECT ...}
   \item \textbf{CTE (Common Table Expression)} -- dočasný pojmenovaný poddotaz pro čitelnost;
     \texttt{WITH TopPlaty AS (SELECT ...) SELECT * FROM TopPlaty}
+
+\textbf{Rozdíl VIEW vs CTE:}
+\begin{itemize}
+  \item \textbf{VIEW} je \textit{trvalý} -- uložen v databázi, vidí ho všichni uživatelé, existuje mezi dotazy; lze na něj přidělovat práva (\texttt{GRANT SELECT ON view TO user}); vhodný když stejný složitý dotaz používáš opakovaně z více míst
+  \item \textbf{CTE} je \textit{dočasný} -- existuje pouze v rámci jednoho dotazu, po jeho skončení zmizí; vhodný pro zpřehlednění složitého dotazu nebo rekurzivní dotazy (hierarchie, stromy); nepotřebuješ \texttt{CREATE} ani \texttt{DROP}
+\end{itemize}
+\textit{Příklad:} Chceš zobrazit zaměstnance s platem nad průměrem. Jako VIEW: \texttt{CREATE VIEW nadprumerny\_plat AS SELECT * FROM zamestnanci WHERE plat > (SELECT AVG(plat) FROM zamestnanci)} -- použiješ to z deseti různých aplikací. Jako CTE: napíšeš \texttt{WITH Prumer AS (SELECT AVG(plat) avg FROM zamestnanci) SELECT * FROM zamestnanci, Prumer WHERE plat > avg} -- jednou, v jednom dotazu, bez nutnosti čehokoli ukládat.
 \end{itemize}
 
 \paragraph{2. Úroveň programového API -- JDBC, ODBC, ADO.NET}
@@ -834,11 +940,11 @@ Aplikace (Java, C\#, Python\ldots) se s databází nepropojují přímo -- použ
 \textbf{standardizované ovladače (drivery)}, které přeloží volání aplikace na síťový protokol databáze.
 
 \begin{center}
-\begin{tabular}{llll}
+\begin{tabular}{p{2cm}p{2.5cm}p{6cm}p{2.5cm}}
 \toprule
-\textbf{API} & \textbf{Jazyk / platforma} & \textbf{Jak funguje} & \textbf{Příklad} \\
+\textbf{API} & \textbf{Jazyk} & \textbf{Jak funguje} & \textbf{Příklad} \\
 \midrule
-\textbf{JDBC} & Java & \texttt{Connection} → \texttt{PreparedStatement} → \texttt{ResultSet} & PostgreSQL JDBC driver \\
+\textbf{JDBC} & Java & \texttt{Connection} $\to$ \texttt{PreparedStatement} $\to$ \texttt{ResultSet} & PostgreSQL JDBC driver \\
 \textbf{ODBC} & C/C++, universal & unifikované C API; driver manager & MS Access, Excel \\
 \textbf{ADO.NET} & C\# / .NET & \texttt{SqlConnection}, \texttt{SqlCommand}, \texttt{DataReader} & MS SQL Server \\
 \textbf{DB-API 2.0} & Python & \texttt{cursor.execute()}, \texttt{fetchall()} & psycopg2, sqlite3 \\
@@ -887,7 +993,11 @@ List<Zamestnanec> vysledek = em.createQuery(
 
 \textbf{Výhody ORM:} nezávislost na DB (přepnutí Oracle→PostgreSQL = změna konfigurace);
 objektový přístup; ochrana proti SQL injection. \textbf{Nevýhody:} generované SQL může být
-neefektivní; složité dotazy se píší obtížně (N+1 problém).
+neefektivní; složité dotazy se píší obtížně; \textbf{N+1 problém} -- klasická past ORM:
+načteš seznam N objednávek (1 dotaz), a pak pro každou objednávku zvlášť načteš zákazníka
+(N dotazů) = celkem N+1 dotazů do DB místo jednoho JOINu.
+\textit{Příklad:} 100 objednávek = 1 SELECT na objednávky + 100 SELECT na zákazníky = 101 dotazů.
+S JOINem by to byl 1 dotaz. Řešení: \texttt{JOIN FETCH} v JPQL nebo \texttt{Include()} v Entity Framework -- explicitně řekneš ORM, ať načte vše najednou.
 
 \subsubsection{SQL (Structured Query Language)}
 
@@ -1020,6 +1130,31 @@ Licence & Proprietární & Proprietární & Open source \\
 
 Standardizovaný dotazovací jazyk pro objektově-orientované databáze (ODMG). Podobný SQL-92.
 Neobsahuje příkazy pro definici dat (CREATE TABLE apod.). Kvůli komplexitě neimplementován v úplnosti.
+
+\textbf{Co je objektově-orientovaná databáze?}
+Zatímco relační DB ukládá data do tabulek (řádky a sloupce), objektově-orientovaná DB ukládá
+data přímo jako \textbf{objekty} -- stejně jako objekty v OOP jazycích (Java, C\#).
+Každý objekt má:
+\begin{itemize}
+  \item \textbf{Atributy} (stav) -- jako pole třídy
+  \item \textbf{Metody} (chování) -- logika přímo u dat
+  \item \textbf{OID} (Object Identifier) -- unikátní identifikátor objektu v celé DB; na rozdíl od PK v relační DB je OID generován systémem a nemění se
+  \item \textbf{Dědičnost} -- třída \texttt{Student} může dědit z třídy \texttt{Osoba}; DB ví o hierarchii tříd
+\end{itemize}
+
+\textbf{Proč vznikla?} V 90. letech narážely aplikace psané v OOP jazycích na
+\textit{impedance mismatch} (impedanční nesoulad) -- objekt v Javě má složitou strukturu
+(vnořené objekty, kolekce, metody), ale relační DB ho musela rozkrájet do tabulek a zpět
+skládat přes JOIN. OO databáze tento problém řeší -- objekt uložíš a načteš přímo, bez překladu.
+
+\textbf{Příklad:} Objekt \texttt{Objednavka} obsahuje seznam objektů \texttt{Polozka},
+každá \texttt{Polozka} obsahuje objekt \texttt{Produkt}. V relační DB = 3 tabulky + 2 JOINy.
+V OO databázi = jeden objekt s vnořenými kolekcemi, uložený a načtený jako celek.
+
+\textbf{V praxi} se OO databáze příliš nerozšířily -- většina vývojářů dává přednost
+relační DB s ORM (Hibernate, Entity Framework), které impedanční nesoulad řeší na aplikační
+vrstvě. OO DB se používají v CAD/CAM systémech, vědeckých aplikacích nebo všude,
+kde jsou objekty příliš složité pro relační model.
 
 \subsubsection{JPQL (Java Persistence Query Language)}
 
