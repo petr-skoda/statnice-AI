@@ -190,9 +190,20 @@ Hierarchická stromová struktura pro klasifikaci nebo regresi.
   \item \textbf{Nevýhody:} náchylné na přeučení, nestabilní (malá změna dat = jiný strom)
 \end{itemize}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/decision-tree.png}
+  \caption{Ukázka rozhodovacího stromu}
+\end{figure}
+
 \paragraph{Random Forest}
 Ansamblová metoda; mnoho rozhodovacích stromů trénovaných na náhodných podmnožinách dat a atributů.
 Výsledek: hlasování (klasifikace) nebo průměr (regrese). Redukuje overfitting.
+\begin{itemize}
+  \item \textbf{Klasifikace} -- každý strom hlasuje pro třídu (např. spam/ne-spam); výsledkem je třída s nejvíce hlasy.
+  \item \textbf{Regrese} -- každý strom vrátí číselnou hodnotu (např. cenu nemovitosti); výsledkem je průměr všech předpovědí.
+\end{itemize}
+Proč redukuje overfitting: jeden strom se může přetrénovat na konkrétní data; průměrování/hlasování přes mnoho různorodých stromů tyto chyby vyruší.
 
 \subsubsection{Clustering (Shlukování)}
 
@@ -207,12 +218,24 @@ Nesupervizovaná metoda; seskupení podobných objektů do skupin (clusterů).
 \end{enumerate}
 Problém: nutno předem zvolit $k$; citlivý na odlehlé hodnoty; předpokládá kulové clustery.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/kmeans.png}
+  \caption{Ukázka K-Means clusteringu}
+\end{figure}
+
 \paragraph{Hierarchické shlukování}
 \begin{itemize}
   \item \textbf{Agglomerativní} -- bottom-up; každý bod začíná jako vlastní cluster, postupně se spojují
   \item \textbf{Divisivní} -- top-down; začíná jedním clusterem, postupně se dělí
   \item Výstup: dendrogram (stromová struktura hierarchie)
 \end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/hiercluster.png}
+  \caption{Dendrogram hierarchického shlukování}
+\end{figure}
 
 \paragraph{DBSCAN}
 Density-Based Spatial Clustering; clustery jako oblasti vysoké hustoty; zvládá libovolné tvary;
@@ -336,16 +359,33 @@ $\Rightarrow$ Celé větve prostoru kombinací lze \textbf{odříznout bez prohl
 \end{center}
 
 \begin{itemize}
-  \item \textbf{Accuracy} -- $\frac{TP+TN}{TP+TN+FP+FN}$ -- celková přesnost
-  \item \textbf{Precision} -- $\frac{TP}{TP+FP}$ -- z predikovaných pozitiv, kolik je správně
-  \item \textbf{Recall (Sensitivity)} -- $\frac{TP}{TP+FN}$ -- z reálných pozitiv, kolik bylo nalezeno
-  \item \textbf{Specificity} -- $\frac{TN}{TN+FP}$ -- z reálných negativ, kolik bylo správně klasifikováno
-  \item \textbf{F1 score} -- $2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$ -- harmonický průměr
+  \item \textbf{Accuracy} -- $\frac{TP+TN}{TP+TN+FP+FN}$ -- celková přesnost; kolik procent všech případů model klasifikoval správně. \textit{Pozor: zavádějící u nevyvážených dat -- model který vždy řekne „není spam" dosáhne 99\% accuracy, pokud je 99 \% e-mailů legitimních.}
+
+  \item \textbf{Precision} -- $\frac{TP}{TP+FP}$ -- z \textit{všech které model označil jako pozitivní}, kolik jich skutečně pozitivní bylo. \\
+    \textit{Příklad:} spamový filtr označil 100 e-mailů jako spam; z toho 90 bylo skutečně spam a 10 byly legitimní e-maily (FP). Precision = 90/100 = 90\%. \\
+    \textit{Kdy je klíčová:} když je drahé mít falešný poplach -- nechceš posílat legitimní e-maily do spamu.
+
+  \item \textbf{Recall (Sensitivity)} -- $\frac{TP}{TP+FN}$ -- z \textit{všech skutečně pozitivních případů}, kolik jich model našel. \\
+    \textit{Příklad:} v e-mailech bylo 200 spamů; filtr zachytil 180 a 20 prošlo (FN). Recall = 180/200 = 90\%. \\
+    \textit{Kdy je klíčová:} když je drahé zmeškat pozitivní případ -- diagnóza rakoviny (nechceš zmeškat ani jeden případ).
+
+  \item \textbf{Precision vs Recall -- trade-off:} zvýšením prahu (model říká „pozitivní" jen když je velmi jistý) roste Precision ale klesá Recall a naopak.
+
+  \item \textbf{F1 score} -- $2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$ -- harmonický průměr Precision a Recall; vyvážená metrika když ti záleží na obou; hodnota 0--1, čím vyšší tím lepší.
+
+  \item \textbf{Specificity} -- $\frac{TN}{TN+FP}$ -- z reálných negativ, kolik bylo správně klasifikováno jako negativní.
 \end{itemize}
 
-\paragraph{ROC křivka (Receiver Operating Characteristic)}
-Graf závislosti TPR (Recall) na FPR ($\frac{FP}{FP+TN}$) při různých prahových hodnotách.
-\textbf{AUC} (Area Under Curve) -- plocha pod ROC křivkou; AUC = 1 = perfektní model; AUC = 0.5 = náhodný model.
+\paragraph{ROC křivka a AUC}
+\textbf{ROC křivka} (Receiver Operating Characteristic) zobrazuje, jak se mění Recall (TPR) vs falešně pozitivní míra (FPR = $\frac{FP}{FP+TN}$) při postupném snižování rozhodovacího prahu modelu. Každý bod na křivce odpovídá jednomu nastavení prahu.
+
+\textbf{AUC} (Area Under Curve) -- plocha pod ROC křivkou; čím větší plocha, tím lepší model:
+\begin{itemize}
+  \item \textbf{AUC = 1.0} -- perfektní model; rozlišuje všechny pozitivní od negativních
+  \item \textbf{AUC = 0.5} -- náhodný model (přímka); model neví nic
+  \item \textbf{AUC = 0.8--0.9} -- dobrý model v praxi
+\end{itemize}
+\textit{Výhoda AUC:} nezávisí na konkrétním prahu -- hodnotí celkovou schopnost modelu rozlišovat třídy, ne jen jedno nastavení.
 
 \paragraph{Metody ověřování modelů}
 \begin{itemize}
@@ -423,8 +463,18 @@ $$w(t,d) = \underbrace{\text{TF}(t,d)}_{\text{četnost v doc.}} \cdot \underbrac
 \begin{itemize}
   \item \textbf{TF (Term Frequency)} -- kolikrát se slovo vyskytuje v dokumentu; ``databáze'' v D1 = 2
   \item \textbf{IDF (Inverse Document Frequency)} $= \log\dfrac{N}{df(t)}$, kde $N$ = počet dokumentů,
-    $df(t)$ = v kolika dokumentech se term vyskytuje; běžná slova jako ``a'', ``the'' jsou ve všech
-    dokumentech $\Rightarrow$ IDF $\approx 0$ $\Rightarrow$ váha blízká nule (filtrují se automaticky)
+    $df(t)$ = v kolika dokumentech se term vyskytuje.
+    \begin{itemize}
+      \item Čím více dokumentů slovo obsahuje, tím větší je $df(t)$, tím menší je podíl $N/df(t)$
+            a tím nižší je IDF -- slovo není příliš rozlišovací.
+      \item Běžná slova jako ``a'', ``the'' se vyskytují skoro ve všech dokumentech
+            $\Rightarrow$ $df(t) \approx N$ $\Rightarrow$ $\log(N/N) = \log(1) = 0$
+            $\Rightarrow$ váha blízká nule (filtrují se automaticky, bez stop-listu).
+      \item Vzácné odborné slovo je třeba jen v jednom dokumentu
+            $\Rightarrow$ $df(t) = 1$ $\Rightarrow$ $\log(N)$ -- maximální IDF, slovo je velmi charakteristické.
+      \item Logaritmus tlumí extrémní rozdíly: sbírka s milionem dokumentů by bez něj dávala
+            obrovská čísla; $\log$ je škáluje do rozumného rozsahu.
+    \end{itemize}
 \end{itemize}
 
 \textit{Výpočet IDF pro náš příklad ($N = 3$):}

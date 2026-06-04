@@ -77,15 +77,45 @@ Dvě osy souladu:
 \end{itemize}
 
 \paragraph{4 perspektivy dosažení alignment dle SAM}
+
+Každá perspektiva říká, \textbf{kdo táhne} změnu a \textbf{kdo se přizpůsobuje}.
+V perspektivách 1 a 2 táhne \textit{business} a IT reaguje; v perspektivách 3 a 4 táhne \textit{IT} a business reaguje.
+
 \begin{enumerate}
-  \item \textbf{Strategy Execution} -- business strategie $\to$ org. infrastruktura $\to$ IT infrastruktura;
-    IT podporuje realizaci definované business strategie (nejčastější pohled)
-  \item \textbf{Technology Transformation} -- business strategie $\to$ IT strategie $\to$ IT infrastruktura;
-    IT odvozuje svou strategii z businessu a buduje odpovídající infrastrukturu
-  \item \textbf{Competitive Potential} -- IT strategie $\to$ business strategie $\to$ org. infrastruktura;
-    IT umožní nové business strategie (IT jako hybná síla inovace)
-  \item \textbf{Service Level} -- IT strategie $\to$ IT infrastruktura $\to$ org. infrastruktura;
-    IT jako excelentní servisní organizace
+  \item \textbf{Strategy Execution} (Business táhne, IT následuje)
+
+    Business strategie $\to$ Org. infrastruktura $\to$ IT infrastruktura.
+    Management definuje strategii a org. procesy; IT pak pouze doplní potřebné systémy.
+    Nejběžnější pohled -- IT je zde \textit{nástrojem}.
+
+    \textit{Příklad:} „Expandujeme na slovenský trh" $\to$ „Otevřeme nové obchodní procesy a call centrum"
+    $\to$ „IT nasadí vícejazyčný CRM."
+
+  \item \textbf{Technology Transformation} (Business táhne, IT buduje strategii)
+
+    Business strategie $\to$ IT strategie $\to$ IT infrastruktura.
+    Business opět určuje směr, ale IT si samostatně odvodí vlastní strategii a pak buduje infrastrukturu.
+    Rozdíl od Strategy Execution: IT strategii \textit{aktivně formuluje}, nejen implementuje.
+
+    \textit{Příklad:} „Chceme být e-shop č. 1" $\to$ „Potřebujeme AI personalizaci a cloudovou škálovatelnost"
+    $\to$ „Stavíme mikroservisy na AWS."
+
+  \item \textbf{Competitive Potential} (IT táhne, business reaguje)
+
+    IT strategie $\to$ Business strategie $\to$ Org. infrastruktura.
+    Nová technologická schopnost \textit{otevře nové business příležitosti} -- IT inovuje a business se přizpůsobí.
+
+    \textit{Příklad:} „Máme AI doporučovací engine" $\to$ „Můžeme nabídnout personalizované předplatné"
+    $\to$ „Restrukturujeme obchodní tým kolem subscription modelu."
+
+  \item \textbf{Service Level} (IT táhne, business přizpůsobuje procesy)
+
+    IT strategie $\to$ IT infrastruktura $\to$ Org. infrastruktura.
+    IT buduje excelentní servisní platformu a business procesy se pak přizpůsobí jejím možnostem.
+    IT je zde \textit{interní servisní organizací} -- důraz na kvalitu a spolehlivost IT služeb.
+
+    \textit{Příklad:} „Máme nejlepší cloudovou platformu" $\to$ „Optimalizujeme infrastrukturu"
+    $\to$ „Obchodní procesy jsou redesignovány, aby využily naše efektivní IT prostředí."
 \end{enumerate}
 
 \subsubsection{IS/IT Strategie}
@@ -165,8 +195,14 @@ Nejrozšířenější architektonický rámec na světě. Vydává ho The Open G
 
 \textbf{Zachmanův rámec (Zachman Framework)}
 
-Rámec ve formě matice $6 \times 6$ -- neříká \textit{jak} architektonické práce dělat (na rozdíl od TOGAF),
-ale \textit{co} musí být popsáno.
+\textbf{K čemu slouží:} Zachmanův rámec zajišťuje, že IS je popsán \textit{úplně} -- z pohledu každého stakeholdera a ze všech relevantních úhlů.
+Různí lidé vidí systém jinak: manažer řeší strategii, architekt logický návrh, vývojář fyzickou implementaci.
+Rámec říká: \textit{každý stakeholder musí umět odpovědět na všech 6 otázek} -- jinak architektura obsahuje slepá místa.
+Neříká \textit{jak} architektonické práce dělat (na rozdíl od TOGAF), ale \textit{co} musí být popsáno.
+
+\textbf{Co vyjadřuje buňka tabulky:} Každá buňka je průsečíkem \textit{pohledu} (kdo se dívá) a \textit{otázky} (na co odpovídá).
+Popisuje konkrétní artefakt, který daný stakeholder potřebuje pro danou dimenzi.
+Například: Owner $\times$ Co? = sémantický datový model (co business považuje za klíčové entity); Builder $\times$ Co? = fyzický datový model v databázi.
 
 \begin{center}
 \begin{tabular}{p{2.2cm}p{1.7cm}p{1.7cm}p{1.7cm}p{1.7cm}p{1.7cm}p{1.7cm}}
@@ -358,16 +394,27 @@ Fáze jsou rozděleny do tří skupin: \textbf{G}lobal analysis, \textbf{S}oluti
   \item \textbf{T2 -- Implementace a nasazení} -- projekt implementace, migrace, školení
 \end{itemize}
 
-Pozn.: VY = výsledky (ne fáze); každá fáze produkuje artefakty.
+Pozn.: VY = výsledky (ne fáze); každá fáze produkuje \textbf{artefakty} -- konkrétní dokumenty nebo modely, které jsou výstupem fáze a vstupem do fáze následující (např. procesní mapa, ER diagram, funkční specifikace, testovací plán).
 
 \subsubsection{3 skupiny pohledů na IS}
 
 MMDIS pracuje s třemi základními pohledy (dimenzemi):
 \begin{enumerate}
-  \item \textbf{Procesní pohled} -- business procesy, workflow, aktivity a jejich vazby
-  \item \textbf{Datový pohled} -- datové modely, entity, atributy, vztahy
-  \item \textbf{Aplikační (funkční) pohled} -- aplikace, jejich funkce a integrace
+  \item \textbf{Procesní pohled} -- business procesy, workflow, aktivity a jejich vazby;
+    odpovídá na otázku \textit{„Co se děje a v jakém pořadí?"};
+    nástroje: EPC, BPMN, vývojové diagramy
+  \item \textbf{Datový pohled} -- datové modely, entity, atributy, vztahy;
+    odpovídá na otázku \textit{„S jakými daty pracujeme a jak jsou strukturována?"};
+    nástroje: ER diagram, UML class diagram
+  \item \textbf{Aplikační (funkční) pohled} -- aplikace, jejich funkce a integrace;
+    odpovídá na otázku \textit{„Jaký software to podporuje?"}
 \end{enumerate}
+
+\textbf{Rozdíl procesního a datového pohledu:}
+Procesní pohled zachycuje \textit{dynamiku} -- jak informace tečou, kdo co kdy dělá.
+Datový pohled zachycuje \textit{strukturu} -- jaká data existují, jaké mají atributy a jak spolu souvisejí.
+Oba pohledy jsou nutné: procesní pohled bez datového neví, s čím proces pracuje;
+datový pohled bez procesního neví, kdy a jak se data mění.
 
 Doplňující pohled: \textbf{Technologický pohled} -- hardware, software, síť, bezpečnost.
 
@@ -447,10 +494,21 @@ BPMN 2.0 je standard OMG pro grafické znázornění podnikových procesů. Nahr
 
 \textbf{Connecting Objects:}
 \begin{itemize}
-  \item \textbf{Sequence Flow} -- plná šipka; tok řízení mezi objekty \textit{(př.: šipka z „Ověřit objednávku" na „Vystavit fakturu")}
-  \item \textbf{Message Flow} -- přerušovaná šipka; komunikace mezi pooly \textit{(př.: zákazník posílá objednávku do poolu e-shopu)}
+  \item \textbf{Sequence Flow} -- plná šipka; tok řízení \textit{uvnitř jednoho poolu} -- určuje pořadí aktivit \textit{(př.: šipka z „Ověřit objednávku" na „Vystavit fakturu")}
+  \item \textbf{Message Flow} -- přerušovaná šipka s prázdnou hlavičkou; komunikace \textit{mezi pooly} (různými účastníky/organizacemi) \textit{(př.: zákazník posílá objednávku do poolu e-shopu)}
   \item \textbf{Association} -- tečkovaná čára; propojení datových objektů s aktivitami \textit{(př.: dokument „Smlouva" asociovaný s aktivitou „Podepsat smlouvu")}
 \end{itemize}
+
+\textbf{Rozdíl Sequence Flow vs.\ Message Flow:}
+Sequence Flow říká \textit{co přijde po čem} -- je to časová a logická návaznost kroků v rámci jednoho procesu.
+Message Flow říká \textit{kdo s kým komunikuje} -- přenáší zprávu přes hranici mezi dvěma samostatnými účastníky.
+Sequence Flow nikdy nepřekračuje hranici poolu; Message Flow naopak \textit{vždy} propojuje různé pooly.
+
+\textbf{Paralelní zpracování v BPMN:}
+Modeluje se pomocí \textbf{Parallel Gateway (AND, symbol +)}.
+Rozbíhací AND gateway spustí \textit{všechny} odchozí větve najednou -- žádná podmínka se nevyhodnocuje.
+Sbíhací AND gateway čeká, dokud \textit{nepřijdou všechny} příchozí větve, pak pokračuje.
+\textit{Příklad:} po schválení objednávky rozbíhací AND spustí paralelně „Připrav zásilku" i „Odešli potvrzovací e-mail"; sbíhací AND počká na oba, pak přejde na „Uzavři objednávku".
 
 \textbf{Swimlanes:}
 \begin{itemize}
@@ -575,10 +633,14 @@ Klíčové požadavky na podnikové procesy -- rámec pro hodnocení procesů:
 
 \subsubsection{MDA (Model Driven Architecture)}
 
-\textbf{MDA} (OMG standard) -- přístup k vývoji SW, kde je model primárním artefaktem, nikoliv kód.
+\textbf{OMG} (Object Management Group) -- mezinárodní nezisková standardizační organizace pro IT;
+vydává standardy jako UML, BPMN, MDA. Říká se jim OMG standardy, protože za nimi stojí tato organizace.
+
+\textbf{MDA} (OMG standard) -- přístup k vývoji SW, kde je \textbf{model} primárním artefaktem, nikoliv kód.
+Myšlenka: nejprve popište systém abstraktně (co má dělat, bez technologie), pak automaticky transformujte na platformně specifický model a nakonec na kód.
 
 \begin{itemize}
-  \item \textbf{CIM (Computation Independent Model)} -- model požadavků a podnikových procesů; nezávislý na technologii
+  \item \textbf{CIM (Computation Independent Model)} -- \textit{byznys pohled}; popisuje, co systém dělá z pohledu byznysu, bez jakéhokoli zmínění technologie nebo implementace; typicky BPMN diagram nebo textový popis požadavků; ``model'' zde znamená formalizovaný popis byznysu
   \item \textbf{PIM (Platform Independent Model)} -- model systému nezávislý na konkrétní platformě;
     popsán v UML; zachycuje logiku a strukturu bez technologických detailů
   \item \textbf{PSM (Platform Specific Model)} -- model přizpůsobený konkrétní platformě (Java EE, .NET, Web);

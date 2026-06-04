@@ -74,6 +74,8 @@ MES je systém na výrobní úrovni -- propojuje plánování (ERP) s fyzickým 
   \item Správa výrobního zařízení (OEE -- Overall Equipment Effectiveness)
 \end{itemize}
 
+Příklady: Siemens Opcenter, SAP ME, Rockwell Automation FactoryTalk, GE Digital Proficy, Wonderware (AVEVA).
+
 %=============================================================================
 \subsection{Implementace podnikových IS}
 %=============================================================================
@@ -159,7 +161,9 @@ Typový základ + individuální rozšíření a integrace. Nejčastější v pr
 
 \paragraph{Výhody cloudových IS}
 \begin{itemize}
-  \item OPEX místo CAPEX -- provozní náklady místo investičních
+  \item \textbf{OPEX} (Operating Expenditure) místo \textbf{CAPEX} (Capital Expenditure) --
+    místo jednorázové velké investice do hardware a licencí (CAPEX) firma platí pravidelný
+    provozní poplatek za službu (OPEX); náklady jsou předvídatelné a snáze schválitelné v rozpočtu
   \item Škálovatelnost -- rychlé přidání kapacity
   \item Odpadá nutnost správy infrastruktury
   \item Vždy aktuální verze softwaru
@@ -178,6 +182,14 @@ jednu věc dobře a je nezávislá na ostatních.
   \item \textbf{Znovupoužitelnost} -- jedna služba slouží více aplikacím/procesům
   \item \textbf{Abstrakce} -- konzument služby nevidí interní implementaci (zná jen rozhraní)
   \item \textbf{Standardizovaná rozhraní} -- SOAP/WSDL (klasické SOA) nebo REST/JSON (moderní)
+    \begin{itemize}
+      \item \textbf{SOAP} (Simple Object Access Protocol) -- protokol pro výměnu zpráv mezi službami;
+        zprávy jsou formátovány v \textbf{XML} a přenášeny typicky přes HTTP;
+        striktní, silně typovaný, vhodný pro enterprise prostředí s požadavky na bezpečnost a transakce
+      \item \textbf{WSDL} (Web Services Description Language) -- XML dokument popisující rozhraní služby:
+        jaké operace nabízí, jaké parametry přijímá a co vrací;
+        slouží jako ``kontrakt'' -- konzument si načte WSDL a přesně ví, jak službu volat
+    \end{itemize}
   \item \textbf{ESB (Enterprise Service Bus)} -- centrální sběrnice; zajišťuje směrování, transformaci
     formátů, bezpečnost a monitoring zpráv mezi službami
 \end{itemize}

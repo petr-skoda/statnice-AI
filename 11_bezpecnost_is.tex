@@ -27,8 +27,11 @@ Algoritmy se základními kryptografickými vlastnostmi, ze kterých se skládaj
 
 \begin{itemize}
   \item \textbf{Bez klíče:} náhodná čísla, hašovací funkce
+    \textit{(př.: SHA-256 -- z libovolné zprávy vyrobí 256bitový otisk; ověření integrity souboru)}
   \item \textbf{Se sdíleným klíčem:} symetrické šifry (blokové, proudové), MAC
+    \textit{(př.: AES -- šifrování dat na disku; HMAC -- ověření autenticity cookie na webu)}
   \item \textbf{S veřejným klíčem:} digitální podpisy, šifrování s veřejným klíčem, výměna klíčů (KEX)
+    \textit{(př.: RSA -- zašifrování AES klíče při navázání TLS spojení; ECDSA -- digitální podpis PDF dokumentu)}
 \end{itemize}
 
 \subsubsection{Symetrická kryptografie}
@@ -40,8 +43,23 @@ Stejný klíč pro šifrování i dešifrování. Rychlá, vhodná pro velká da
   \item Generátor proudu bitů; XOR s otevřeným textem $\to$ šifrovaný text
   \item Klíč se nesmí opakovat (každá zpráva musí mít nový klíč)
   \item \textbf{Vernamova šifra (One Time Pad)} -- klíč stejně dlouhý jako zpráva; teoreticky perfektní
-  \item Příklady: Salsa, RC4 (zastaralý)
+  \item Příklady: Salsa20, ChaCha20, RC4 (zastaralý)
 \end{itemize}
+
+\textit{Příklad šifrování (zjednodušeně na bajtech):}
+\begin{center}\footnotesize
+\begin{tabular}{llll}
+\toprule
+ & \textbf{Binárně} & \textbf{Hex} & \textbf{Poznámka} \\
+\midrule
+Zpráva (plaintext) & \texttt{01001000} & \texttt{48} & znak `H' \\
+Proud klíče (keystream) & \texttt{10110011} & \texttt{B3} & generováno ze sdíleného klíče \\
+Šifrovaný text (XOR) & \texttt{11111011} & \texttt{FB} & výsledek XOR \\
+\bottomrule
+\end{tabular}
+\end{center}
+Dešifrování: XOR šifrovaného textu se stejným proudem klíče vrátí původní zprávu (\texttt{FB} XOR \texttt{B3} = \texttt{48} = `H').
+Bezpečnost závisí na nepředvídatelnosti proudu klíče -- proto nesmí být tentýž klíč použit dvakrát.
 
 \paragraph{Blokové šifry (Block Ciphers)}
 \begin{itemize}
@@ -76,9 +94,19 @@ Veřejný klíč lze sdílet; soukromý musí zůstat tajný.
 
 \paragraph{Typy algoritmů}
 \begin{itemize}
-  \item \textbf{RSA} -- faktorizace velkých čísel ($n = p \cdot q$); klíče 2048+ bitů
-  \item \textbf{Diffie-Hellman (DH)} -- diskrétní logaritmus; výměna klíčů bez přenosu tajemství
-  \item \textbf{Eliptické křivky (EC)} -- ECDH, ECDSA, Ed25519; kratší klíče, stejná bezpečnost jako RSA
+  \item \textbf{RSA} -- bezpečnost stojí na \textit{obtížnosti faktorizace velkých čísel} ($n = p \cdot q$); klíče 2048+ bitů.
+    \textit{Princip šifrování:} veřejný klíč $(n, e)$, šifrování $c = m^e \mod n$; dešifrování $m = c^d \mod n$ soukromým klíčem $d$.
+    Odvodit $d$ z veřejného $(n, e)$ vyžaduje znát $p$ a $q$, což je pro velká $n$ výpočetně neřešitelné.
+    \textit{Použití:} šifrování AES klíče (hybridní šifrování), digitální podpis.
+
+  \item \textbf{Diffie-Hellman (DH)} -- bezpečnost stojí na \textit{obtížnosti diskrétního logaritmu}; výměna klíčů bez přenosu tajemství.
+    Obě strany se dohodnou na veřejných parametrech $p, g$; každá zvolí soukromé číslo, vypočte veřejnou hodnotu a pošle ji druhé straně; ze dvou veřejných hodnot obě strany odvodí \textit{stejné} sdílené tajemství, aniž ho kdykoliv přenesly po síti.
+    \textit{Použití:} výměna klíčů v TLS (ECDHE pro Perfect Forward Secrecy).
+
+  \item \textbf{Eliptické křivky (EC)} -- stejná matematická idea jako DH, ale operace probíhají na eliptické křivce nad konečným tělesem.
+    Výsledek: \textbf{výrazně kratší klíče} pro stejnou bezpečnost (256 bitů EC $\approx$ 3072 bitů RSA).
+    Varianty: ECDH (výměna klíčů), ECDSA / Ed25519 (digitální podpis).
+    \textit{Použití:} TLS 1.3 (ECDHE), certifikáty, SSH klíče.
 \end{itemize}
 
 \paragraph{Diffie-Hellman výměna klíčů}
@@ -132,6 +160,16 @@ Současné šifrování i výpočet MAC -- efektivnější než kombinace šifra
   \item \textbf{GCM mode} -- AES-GCM je AEAD; nejbezpečnější přístup
 \end{itemize}
 
+\textit{Ukázka AES-GCM (nejpoužívanější AEAD):}
+\begin{enumerate}
+  \item Vstup: klíč (256 bit), nonce/IV (96 bit), plaintext, Associated Data (AD -- nešifrovaná, ale chráněná data, např. HTTP hlavičky)
+  \item CTR mód zašifruje plaintext $\to$ ciphertext
+  \item GHASH (Galoisovo tělové násobení) spočítá authentication tag (128 bit) přes ciphertext + AD
+  \item Výstup: ciphertext + authentication tag
+  \item Příjemce: dešifruje CTR módem, přepočítá tag; pokud se neshoduje $\to$ zpráva zamítnuta (integrita + autentizace)
+\end{enumerate}
+\textit{Klíčová vlastnost:} Associated Data (AD) jsou \textit{chráněna tagem, ale nešifrována} -- příjemce ověří, že AD nebyla změněna, ale může je číst v plaintextu. Typické použití: HTTP/2 hlavičky v TLS 1.3.
+
 \subsubsection{Digitální podpis}
 
 Asymetrický ekvivalent MAC -- zajišťuje autentizaci \textbf{i} neodmítnutelnost.
@@ -172,12 +210,17 @@ Certifikát je datová struktura obsahující:
 \end{itemize}
 
 \paragraph{Infrastruktura veřejných klíčů (PKI)}
+
+\textbf{PKI} (Public Key Infrastructure) je soustava technologií, rolí a procesů, která umožňuje bezpečné používání asymetrické kryptografie ve velkém měřítku.
+Základní problém: jak víte, že veřejný klíč, který jste dostali, skutečně patří tomu, za koho se dotyčný vydává?
+PKI to řeší pomocí \textbf{certifikátů} -- důvěryhodná třetí strana (CA) podepíše veřejný klíč spolu s identitou vlastníka.
+
 \begin{itemize}
-  \item \textbf{CA (Certification Authority)} -- vydává a podepisuje certifikáty; ověřuje žadatele
-  \item \textbf{RA (Registration Authority)} -- ověřování identity žadatelů pro CA
-  \item \textbf{Řetězec důvěry} -- Root CA $\to$ Intermediate CA $\to$ koncový certifikát
-  \item \textbf{CRL (Certificate Revocation List)} -- seznam zrušených certifikátů
-  \item \textbf{OCSP} -- online ověření platnosti certifikátu
+  \item \textbf{CA (Certification Authority)} -- vydává a podepisuje certifikáty; ověřuje identity žadatelů; \textit{př.: Let's Encrypt, DigiCert, I.CA}
+  \item \textbf{RA (Registration Authority)} -- ověřuje identitu žadatele jménem CA (fyzická kontrola dokladů); CA pak certifikát vydá
+  \item \textbf{Řetězec důvěry} -- Root CA $\to$ Intermediate CA $\to$ koncový certifikát; prohlížeč důvěřuje Root CA (předinstalované); ověří celý řetězec až ke koncovému certifikátu
+  \item \textbf{CRL (Certificate Revocation List)} -- seznam zrušených certifikátů; nevýhoda: může být zastaralý
+  \item \textbf{OCSP} -- online dotaz na CA v reálném čase; odpověď: valid / revoked / unknown
 \end{itemize}
 
 \subsubsection{eIDAS -- Elektronická identifikace a podpisy}
@@ -199,9 +242,9 @@ Kvalifikovaný el. podpis & Kvalifikovaný certifikát & Kvalifikovaný prostře
 \end{center}
 
 \begin{itemize}
-  \item \textbf{Zaručený el. podpis} -- z CESNETu; uznávaný všemi orgány veřejné moci v ČR
-  \item \textbf{Uznávaný el. podpis} -- privátní klíč uložen na disku; v ČR neexistují
-  \item \textbf{Kvalifikovaný el. podpis} -- privátní klíč na kvalifikovaném prostředku (čipová karta, USB token); nelze vyexportovat
+  \item \textbf{Zaručený el. podpis} -- splňuje eIDAS požadavky pro zaručený podpis; vydávají např. CESNET, I.CA
+  \item \textbf{Uznávaný el. podpis} -- český právní pojem (zákon č.\ 297/2016 Sb.); = zaručený el.\ podpis + kvalifikovaný certifikát; soukromý klíč může být uložen softwarově (na disku); \textit{jako samostatný produkt} ho poskytovatelé nenabízejí -- v praxi získáte kvalifikovaný certifikát a použijete ho buď se SW klíčem (uznávaný podpis) nebo s HW tokenem (kvalifikovaný podpis)
+  \item \textbf{Kvalifikovaný el. podpis} -- privátní klíč na kvalifikovaném prostředku (čipová karta, USB token); nelze vyexportovat; nejvyšší právní síla
 \end{itemize}
 
 %=============================================================================
@@ -275,7 +318,9 @@ Síťové zařízení blokující nebo povolující provoz na základě pravidel
 
 \paragraph{Typy firewallů}
 \begin{itemize}
-  \item \textbf{Packet filter} -- filtrování na základě IP, portu, protokolu (L3/L4)
+  \item \textbf{Packet filter} -- filtrování na základě hlaviček paketů; pracuje na vrstvách L3 a L4 síťového modelu:
+    \textbf{L3 (síťová vrstva)} = zdrojová/cílová IP adresa, TTL;
+    \textbf{L4 (transportní vrstva)} = TCP/UDP port, příznaky (SYN, ACK); nezkoumá obsah paketu; rychlý, ale nedokáže odhalit aplikační hrozby
   \item \textbf{Stateful inspection} -- sleduje stav TCP spojení
   \item \textbf{Application layer (WAF)} -- filtrování na aplikační vrstvě (HTTP, HTTPS)
 \end{itemize}
@@ -294,8 +339,29 @@ Překlad IP adres v záhlaví paketů:
 \begin{itemize}
   \item Skrývá interní síťovou strukturu
   \item Šetří veřejné IPv4 adresy (privátní $\to$ veřejná)
-  \item SNAT (Source NAT) -- mění zdrojovou IP (pro odchozí provoz)
-  \item DNAT (Destination NAT) -- mění cílovou IP (port forwarding)
+  \item \textbf{SNAT (Source NAT)} -- mění zdrojovou IP (pro odchozí provoz)
+
+    \textit{Příklad:} PC s IP \texttt{192.168.1.10} odešle HTTP požadavek; router přepíše zdrojovou IP na svou veřejnou \texttt{1.2.3.4}; vzdálený server odpovídá na \texttt{1.2.3.4}; router přeloží zpět na \texttt{192.168.1.10}.
+
+  \item \textbf{DNAT (Destination NAT)} -- mění cílovou IP (port forwarding)
+
+    \textit{Příklad:} Na veřejné IP \texttt{1.2.3.4:80} běží webový server ve vnitřní síti na \texttt{192.168.1.20:80}; příchozí paket na \texttt{1.2.3.4:80} je routerem přeložen a doručen na \texttt{192.168.1.20:80}.
+
+  \item \textbf{PAT (Port Address Translation) = NAPT} -- rozšíření SNAT; \textit{mnoho privátních IP sdílí jednu veřejnou IP} pomocí různých portů
+
+    \textit{Příklad:} Tři PC (\texttt{192.168.1.10}, \texttt{.11}, \texttt{.12}) naváží každé HTTP spojení; router přiřadí každému jinný zdrojový port na veřejné IP:
+    \begin{center}\footnotesize
+    \begin{tabular}{lll}
+    \toprule
+    \textbf{Interní} & \textbf{$\to$} & \textbf{Veřejné (po PAT)} \\
+    \midrule
+    \texttt{192.168.1.10:54001} & $\to$ & \texttt{1.2.3.4:60001} \\
+    \texttt{192.168.1.11:54001} & $\to$ & \texttt{1.2.3.4:60002} \\
+    \texttt{192.168.1.12:54001} & $\to$ & \texttt{1.2.3.4:60003} \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+    Router udržuje NAT tabulku a při odpovědi přeloží zpět. Díky PAT může celá domácí síť (254 zařízení) sdílet jednu veřejnou IPv4 adresu.
 \end{itemize}
 
 \subsubsection{IDS a IPS}
@@ -328,11 +394,23 @@ Kryptografický protokol zajišťující bezpečnou komunikaci přes síť. Nás
 \end{enumerate}
 
 \paragraph{TLS 1.3 (aktuální standard)}
+
+\textbf{RTT (Round Trip Time)} = čas jedné výměny zpráv tam a zpět (klient $\to$ server $\to$ klient).
+TLS 1.2 potřeboval \textbf{2 RTT} před začátkem šifrované komunikace (dva úplné oběhy).
+TLS 1.3 to zvládne za \textbf{1 RTT} -- klient rovnou v prvním Client Hello pošle i Key Share (ECDHE parametry); server může odpovědět šifrovaně a ihned přiložit certifikát i Finished zprávu.
+
+\textit{Princip TLS 1.3 handshake (1-RTT):}
+\begin{enumerate}
+  \item \textbf{Client Hello} -- klient pošle: podporované cipher suites, náhodné číslo, \textit{Key Share} (veřejné ECDHE parametry)
+  \item \textbf{Server Hello + šifrovaná data} -- server vybere cipher suite, pošle svůj Key Share; oba odvodí sdílené tajemství; server hned pošle certifikát a Finished (šifrovaně)
+  \item \textbf{Client Finished} -- klient ověří certifikát, pošle Finished; spojení je navázáno
+  \item Výsledek: šifrovaná komunikace začíná po \textbf{jednom obousměrném výměnu} (1 RTT)
+\end{enumerate}
+
 \begin{itemize}
-  \item 1-RTT handshake (místo 2-RTT v TLS 1.2) -- snížena latence
-  \item Pouze bezpečné cipher suites; odstraněny staré (RC4, DES, MD5)
-  \item Povinný Perfect Forward Secrecy (ECDHE)
-  \item 0-RTT pro opakovaná připojení (pozor na replay attacks)
+  \item Pouze bezpečné cipher suites; odstraněny staré (RC4, DES, MD5, RSA key exchange)
+  \item Povinný Perfect Forward Secrecy (ECDHE) -- kompromitace dlouhodobého klíče neohrožuje minulé relace
+  \item \textbf{0-RTT} pro opakovaná připojení -- klient pošle data hned v prvním paketu pomocí session ticketu; pozor na replay attacks (odeslaná data lze zopakovat)
 \end{itemize}
 
 \subsubsection{VPN (Virtual Private Network)}

@@ -21,6 +21,12 @@ Hodnotí (Evaluate) -- Řídí (Direct) -- Monitoruje (Monitor) & Plánuje (Plan
 \end{tabular}
 \end{center}
 
+\textbf{Governance} stanovuje \textit{co} a \textit{proč} -- určuje cíle, priority a pravidla hry;
+zodpovídá za ni rada či vedení organizace.
+\textbf{Management} řeší \textit{jak} -- plánuje, realizuje a provozuje konkrétní aktivity, aby těchto cílů dosáhl;
+zodpovídají za něj manažeři a vedoucí týmů.
+Governance je tedy nadřazená vrstva: vymezuje prostor, ve kterém management pracuje.
+
 \textbf{Enterprise Governance of IT (EGIT)} = zajistí, že IT strategie je v souladu s podnikovou strategií
 a že IT přináší hodnotu.
 
@@ -40,7 +46,21 @@ a že IT přináší hodnotu.
 
 \textbf{COBIT} je komplexní rámec pro správu a řízení podnikové informatiky vydaný organizací ISACA.
 Aktuální verze je \textbf{COBIT 2019} (vydána listopad 2018); předchozí verze COBIT 5 (2012) je stále
-rozšířená a v literatuře hojně citovaná -- zkoušející se mohou ptát na obě.
+rozšířená a v literatuře hojně citovaná.
+
+\textbf{Pro koho je COBIT určen?}
+Primárně pro \textbf{management a vedení organizace} -- CIO, IT ředitele, interní auditory a compliance manažery.
+Zajímá je otázka \textit{„Děláme správné věci a dosahujeme cílů?"} -- tedy governance pohled na IT.
+Typicky ho používají větší organizace, banky, pojišťovny a firmy podléhající regulaci (SOX, Basel).
+
+\textbf{Vztah COBIT a ITIL:}
+COBIT a ITIL se doplňují -- nejsou konkurenti.
+\begin{itemize}
+  \item \textbf{COBIT} říká \textit{co} musí governance a management IT pokrývat a jak měřit, zda je to splněno; je to zastřešující rámec.
+  \item \textbf{ITIL} říká \textit{jak} konkrétně provozovat a dodávat IT služby; je to provozní návod pro IT tým.
+  \item Prakticky: COBIT definuje cíl (např. ``Zajistit dodávku kvalitních služeb''), ITIL poskytuje procesy, jak ho naplnit (Incident Management, Change Management\ldots).
+  \item COBIT sám na ITIL odkazuje jako na jeden z doporučených standardů pro oblast správy IT služeb.
+\end{itemize}
 
 \begin{center}
 \begin{tabular}{p{4cm}p{4.5cm}p{4.5cm}}
@@ -91,10 +111,6 @@ Tematické rozšíření COBIT 2019 pro specifické domény:
 \textit{Principy COBIT 5 jsou stále relevantní -- COBIT 2019 je rozšiřuje, ne nahrazuje.}
 
 \paragraph{Princip 1: Naplňování potřeb zainteresovaných stran}
-
-\subsubsection{Pět principů COBIT 5}
-
-\paragraph{Princip 1: Naplňování potřeb zainteresovaných stran}
 Cílem je tvorba hodnoty pro zainteresované strany. COBIT pracuje s kaskádou cílů:
 Potřeby zainteresovaných stran $\to$ Podnikové cíle $\to$ IT-related cíle $\to$ Cíle facilitátorů.
 
@@ -115,7 +131,8 @@ COBIT je zastřešující rámec, který lze kombinovat s jinými standardy:
 \end{itemize}
 
 \paragraph{Princip 4: Uplatnění holistického přístupu}
-COBIT definuje 7 facilitátorů (enablers) governance a managementu:
+\textbf{Facilitátor (enabler)} je cokoliv, co pomáhá organizaci dosáhnout svých cílů v oblasti governance a managementu IT -- tedy zdroje, nástroje a mechanismy, které governance \textit{umožňují} fungovat.
+COBIT definuje 7 takových facilitátorů:
 \begin{enumerate}
   \item Principy, politiky a rámce
   \item Procesy
@@ -232,7 +249,7 @@ Organizovaný kolem 5 knih odpovídajících životnímu cyklu IT služby:
 
 \paragraph{Incident Management vs. Problem Management -- rozdíl na příkladu}
 
-Toto je nejdůležitější rozlišení v ITIL, které profesor Zeman přímo zkouší:
+Toto je nejdůležitější rozlišení v ITIL:
 
 \begin{center}
 \begin{tabular}{p{2.2cm}p{5.2cm}p{5.2cm}}
@@ -295,12 +312,13 @@ Modernizovaná verze reagující na DevOps, Agile, Cloud a digitální transform
   \item \textbf{Service Value System (SVS)} -- holistický pohled na to, jak všechny komponenty a aktivity
     organizace spolupracují na vytváření hodnoty
   \item \textbf{Service Value Chain (SVC)} -- 6 aktivit: Plan, Improve, Engage, Design \& Transition, Obtain/Build, Deliver \& Support
-  \item \textbf{4 dimenze správy služeb:}
+  \item \textbf{4 dimenze správy služeb} -- každou službu je nutné zvážit ze čtyř úhlů pohledu,
+    aby nic nebylo opomenuto:
     \begin{enumerate}
-      \item Organizace a lidé
-      \item Informace a technologie
-      \item Partneři a dodavatelé
-      \item Procesy a hodnotoví toky
+      \item \textbf{Organizace a lidé} -- kdo službu zajišťuje; role, zodpovědnosti, kultura a kompetence týmu
+      \item \textbf{Informace a technologie} -- jaká data, znalosti a nástroje jsou ke službě potřeba
+      \item \textbf{Partneři a dodavatelé} -- kdo dodává zvenčí; smlouvy, závislosti na třetích stranách
+      \item \textbf{Procesy a hodnotové toky} -- jak práce protéká organizací od požadavku k výsledku; aktivity a jejich návaznosti
     \end{enumerate}
   \item \textbf{Guiding principles (7 průvodních principů):}
     \begin{enumerate}
