@@ -559,34 +559,13 @@ dostane informaci o nedostupnosti.
 \end{center}
 
 \vspace{0.4cm}
-\noindent\textbf{BPMN -- orientace zleva doprava, explicitní Start/End Event:}
+\noindent\textbf{BPMN -- swimlanes, Message Flow a Gateway:}
 
-\begin{center}
-\begin{tikzpicture}[
-  node distance=1.0cm and 1.5cm,
-  startevent/.style={draw, circle, minimum size=0.75cm, thin},
-  endevent/.style={draw, circle, minimum size=0.75cm, line width=2.5pt},
-  task/.style={draw, rounded corners=4pt, minimum width=2.8cm, minimum height=0.85cm,
-               align=center, font=\scriptsize, fill=blue!10},
-  gw/.style={draw, shape=diamond, minimum width=1.1cm, minimum height=1.1cm,
-             font=\scriptsize\bfseries, fill=orange!15, inner sep=0pt},
-  arr/.style={->, >=stealth}
-]
-\node[startevent, label=below:{\tiny Objednávka přijata}] (start) {};
-\node[task, right=of start] (t1) {Zkontrolovat\\dostupnost zboží};
-\node[gw, right=of t1] (xor) {X};
-\node[task, above right=0.9cm and 1.2cm of xor] (t2) {Připravit zásilku};
-\node[task, below right=0.9cm and 1.2cm of xor] (t3) {Informovat zákazníka};
-\node[endevent, right=of t2, label=below:{\tiny Zásilka odeslána}] (end1) {};
-\node[endevent, right=of t3, label=below:{\tiny Zákazník informován}] (end2) {};
-\draw[arr] (start) -- (t1);
-\draw[arr] (t1) -- (xor);
-\draw[arr] (xor) -- (t2) node[midway, above, font=\tiny] {skladem};
-\draw[arr] (xor) -- (t3) node[midway, below, font=\tiny] {není};
-\draw[arr] (t2) -- (end1);
-\draw[arr] (t3) -- (end2);
-\end{tikzpicture}
-\end{center}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{img/bpmn.png}
+  \caption{BPMN diagram se swimlanes (User, System, Manager); přerušované šipky = Message Flow mezi lanes; plné šipky = Sequence Flow uvnitř lane}
+\end{figure}
 
 \noindent\textbf{Co diagramy ilustrují:}
 \begin{itemize}
