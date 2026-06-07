@@ -346,7 +346,66 @@ Sekvenční fáze: analýza $\to$ návrh $\to$ implementace $\to$ testování $\
 \end{itemize}
 
 \paragraph{RUP (Rational Unified Process)}
-Iterativní rámec; 4 fáze (Inception, Elaboration, Construction, Transition) s opakujícími se iteracemi.
+RUP je iterativní a inkrementální rámec pro vývoj softwaru vytvořený firmou Rational Software (dnes IBM).
+Na rozdíl od vodopádu není sekvenční -- projekt prochází čtyřmi fázemi, přičemž v každé fázi probíhá
+jedna nebo více iterací (typicky 2--6 týdnů). V každé iteraci se provádějí všechny disciplíny
+(analýza, návrh, implementace, testování), ale s různou intenzitou.
+
+\textbf{4 fáze RUP:}
+
+\begin{enumerate}
+  \item \textbf{Inception (Zahájení)} -- definice scope a business case; klíčová otázka:
+    \textit{„Má projekt smysl dělat?"}
+    \begin{itemize}
+      \item Výstup: vize projektu, hrubý odhad nákladů a rizik, identifikace klíčových use cases
+      \item \textit{Příklad:} tým e-shopu identifikuje 5 klíčových use cases (přihlášení, nákup, platba,
+        správa produktů, reporty), odhadne náklady na 6 měsíců, vedení projekt schválí
+    \end{itemize}
+
+  \item \textbf{Elaboration (Rozpracování)} -- podrobná analýza požadavků, návrh architektury;
+    klíčová otázka: \textit{„Jak to postavíme a zvládneme rizika?"}
+    \begin{itemize}
+      \item Výstup: stabilní architektura (``executable architecture baseline''), podrobné use cases,
+        plán iterací pro Construction
+      \item \textit{Příklad:} architekti navrhnou microservice architekturu (API Gateway, platební
+        služba, notifikační služba); identifikují riziko integrace s platební bránou a ověří ho
+        prototypem; teprve tehdy se přechází do Construction
+      \item Toto je nejkritičtější fáze -- pokud je architektura špatně, oprava v Construction je drahá
+    \end{itemize}
+
+  \item \textbf{Construction (Budování)} -- iterativní vývoj celého produktu;
+    klíčová otázka: \textit{„Postavíme to."}
+    \begin{itemize}
+      \item Výstup: funkční beta verze softwaru připravená k nasazení
+      \item Typicky více iterací (každá přidá nové funkce a opraví chyby z předchozí)
+      \item \textit{Příklad:} sprint 1 -- přihlášení a správa produktů; sprint 2 -- nákupní košík;
+        sprint 3 -- platební brána + notifikace; sprint 4 -- administrace a reporty
+    \end{itemize}
+
+  \item \textbf{Transition (Nasazení)} -- předání systému uživatelům; klíčová otázka:
+    \textit{„Dostaneme to k uživatelům?"}
+    \begin{itemize}
+      \item Výstup: nasazená produkční verze, zaškolení uživatelé, uzavřená dokumentace
+      \item \textit{Příklad:} beta testování s vybranými zákazníky, oprava chyb, migrace dat
+        ze starého systému, školení zákaznické podpory, spuštění ostrého provozu
+    \end{itemize}
+\end{enumerate}
+
+\textbf{6 klíčových praktik RUP:}
+\begin{enumerate}
+  \item Iterativní vývoj -- dodávej fungující software po malých částech
+  \item Správa požadavků -- požadavky se průběžně upřesňují, ne jednou na začátku
+  \item Komponentová architektura -- systém je složen ze znovupoužitelných komponent
+  \item Vizuální modelování -- UML diagramy jako komunikační jazyk (use case, class, sequence\ldots)
+  \item Průběžné ověřování kvality -- testování probíhá v každé iteraci, ne až na konci
+  \item Řízení změn -- každá změna požadavku nebo kódu prochází řízeným procesem
+\end{enumerate}
+
+\textbf{RUP vs. Waterfall vs. Scrum:}
+Vodopád je sekvenční a netolerantní ke změnám; RUP je iterativní, ale stále ``těžký'' (velká dokumentace,
+formální role, hodí se pro větší týmy a složité systémy s předem danou architekturou);
+Scrum je agilní a lehký (minimální dokumentace, krátké sprinty, hodí se pro menší týmy
+s proměnnými požadavky). RUP stojí mezi nimi.
 
 \subsubsection{Agilní metodiky}
 

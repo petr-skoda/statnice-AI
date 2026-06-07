@@ -257,6 +257,7 @@ Každá normální forma buduje na předchozí -- pokud je tabulka v 3NF, je aut
   \item \textbf{2NF} -- každý neklíčový atribut je plně závislý na každém kandidátním klíči
     (neklíčový atribut = atribut, který není součástí žádného kandidátního klíče)
   \item \textbf{3NF} -- všechny neklíčové atributy musí být vzájemně nezávislé
+    (žádný neklíčový atribut neurčuje jiný neklíčový atribut -- vše závisí přímo na klíči)
   \item \textbf{BCNF} -- atributy, které jsou součástí primárního klíče, musí být vzájemně nezávislé
   \item \textbf{4NF} -- relace popisuje pouze příčinnou souvislost mezi klíčem a atributy
   \item \textbf{5NF} -- relaci již není možno bezztrátově rozložit
@@ -350,6 +351,12 @@ Problém: ``Kniha Java'' se opakuje -- změna názvu vyžaduje UPDATE na více �
 %--- 3NF ---
 \paragraph{3. normální forma (3NF)}
 \textbf{Pravidlo:} Je v 2NF a všechny neklíčové atributy musí být vzájemně nezávislé -- nesmí existovat tranzitivní závislost neklíčového atributu přes jiný neklíčový atribut.
+
+\textbf{Co znamená vzájemně nezávislé?}
+Dva neklíčové atributy $A$ a $B$ jsou vzájemně nezávislé, pokud mezi nimi neexistuje funkční závislost -- ani $A \to B$, ani $B \to A$.
+Jinými slovy: každý neklíčový atribut závisí \textit{přímo} na klíči tabulky, a ne na jiném neklíčovém atributu.
+
+\textit{Příklad:} \texttt{jmeno} a \texttt{id\_oddel} jsou vzájemně nezávislé -- znalost jména ti neřekne, v jakém oddělení zaměstnanec pracuje, ani naopak. Oba závisí jen na \texttt{id\_zam} (klíči). Naopak \texttt{id\_oddel} a \texttt{nazev\_oddel} vzájemně nezávislé \textbf{nejsou} -- z \texttt{id\_oddel} přímo odvodíš \texttt{nazev\_oddel}, tedy $\text{id\_oddel} \to \text{nazev\_oddel}$. To je narušení 3NF.
 
 \medskip
 \begin{tcolorbox}[colback=yellow!15, colframe=orange!60, title=Co je tranzitivní závislost?]

@@ -409,6 +409,144 @@ Certifikace & Foundation, Practitioner... & Foundation, Specialist... \\
 \end{tabular}
 \end{center}
 
+%=============================================================================
+\subsection{Řízení portfolia IT projektů (IT PPM)}
+%=============================================================================
+
+\textbf{IT Project Portfolio Management (IT PPM)} je disciplína správy a optimalizace sady IT projektů
+a programů jako celku, nikoli individuálně.
+Cílem je maximalizovat celkovou hodnotu IT investic při omezeném rozpočtu a kapacitě zdrojů
+a zajistit soulad projektů se strategií organizace.
+
+\begin{center}
+\begin{tabular}{p{2.5cm}p{10cm}}
+\toprule
+\textbf{Úroveň} & \textbf{Popis} \\
+\midrule
+\textbf{Projekt} & Dočasné úsilí za účelem vytvoření unikátního výsledku (PMBOK) \\
+\textbf{Program} & Skupina vzájemně souvisejících projektů řízených koordinovaně;
+  benefity nelze dosáhnout jednotlivými projekty samostatně \\
+\textbf{Portfolio} & Soubor projektů, programů a operativního úsilí sdružených ke strategickým cílům;
+  projekty v portfoliu nemusejí spolu přímo souviset \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Proč řídit portfolio, ne jen jednotlivé projekty?}
+Bez PPM firmy trpí typickými problémy: příliš mnoho projektů najednou přetěžuje zdroje a nic se nedokončí;
+projekty bez strategické hodnoty ``přežívají'' kvůli politickým tlakům; duplicitní projekty řeší stejný problém
+různými týmy; portfolio není schopno reagovat na změnu strategie.
+
+\textit{Příklad:} IT oddělení banky má 40 otevřených projektů. Bez PPM každý projekt bojuje o vývojáře zvlášť.
+S PPM management vidí celé portfolio a rozhodne: ``Pozastavíme 15 nízkoprioritních projektů
+a uvolníme kapacity pro strategický projekt open bankingu.''
+
+\subsubsection{Kategorizace portfolia -- Run/Grow/Transform}
+
+Gartnerovo rozdělení IT výdajů a projektů do tří kategorií:
+
+\begin{center}
+\begin{tabular}{p{2.8cm}p{4.2cm}p{5.2cm}}
+\toprule
+\textbf{Kategorie} & \textbf{Popis} & \textbf{Příklady} \\
+\midrule
+\textbf{Run} \newline (Provoz) &
+  Udržet stávající systémy v chodu; snižovat náklady; bez těchto aktivit firma nefunguje &
+  Provoz ERP, zálohy, helpdesk, licence, bezpečnostní patche \\
+\midrule
+\textbf{Grow} \newline (Růst) &
+  Rozšíření stávajících schopností; incrementální inovace; podpora business růstu &
+  Nový modul CRM, integrace e-commerce, rozšíření DWH \\
+\midrule
+\textbf{Transform} \newline (Transformace) &
+  Disruptivní změny; zcela nové schopnosti; vysoké riziko i potenciální hodnota &
+  Migrace do cloudu, zavedení AI, digitální transformace \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{Typické rozložení:} Run 60--70\,\%, Grow 20--25\,\%, Transform 10--15\,\%.
+Strategicky vyspělé firmy tlačí podíl Transform nahoru; Run nelze zanedbat.
+
+\subsubsection{Procesy řízení IT portfolia}
+
+\paragraph{1. Identifikace a registrace}
+Všechny navrhované IT projekty jsou evidovány v \textbf{registru portfolia}.
+Každý projekt má Business Case: co řeší, odhadované náklady (TCO), přínosy a rizika.
+
+\paragraph{2. Hodnocení a selekce}
+
+\begin{center}
+\begin{tabular}{p{3.5cm}p{8.5cm}}
+\toprule
+\textbf{Kritérium} & \textbf{Popis} \\
+\midrule
+\textbf{Strategická shoda} & Do jaké míry projekt podporuje podnikové nebo IT cíle? (skóre 1--5) \\
+\textbf{Finanční hodnota} & ROI, NPV (čistá současná hodnota), doba návratnosti \\
+\textbf{Riziko} & Technické, organizační a dodavatelské riziko \\
+\textbf{Regulatorní povinnost} & Je projekt povinný (zákon, GDPR, DORA)? Povinné projekty mají automaticky vysokou prioritu \\
+\textbf{Závislosti} & Závisí projekt na jiných projektech nebo systémech? \\
+\textbf{Kapacitní dopady} & Kolik FTE projekt vyžaduje a na jak dlouho? \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{3. Prioritizace a schválení}
+Projekty jsou seřazeny pomocí \textbf{scoring modelu} (vážený průměr kritérií) a předloženy
+\textbf{IT řídícímu výboru} (IT Steering Committee) nebo \textbf{PMO} ke schválení.
+Výsledkem jsou tři skupiny: schválené a financované projekty, projekty v zásobníku (backlog)
+a odmítnuté projekty (nízká priorita nebo nesoulad se strategií).
+
+\paragraph{4. Monitoring a rebalancování}
+Portfolio se přehodnocuje pravidelně (čtvrtletně):
+\begin{itemize}
+  \item Změnila se strategie? $\to$ přehodnotit priority
+  \item Projekt zaostává za plánem? $\to$ rozhodnout: pokračovat, pozastavit, ukončit
+  \item Uvolnily se zdroje? $\to$ aktivovat projekty z backlogu
+\end{itemize}
+
+\subsubsection{Val IT -- rámec pro řízení hodnoty IT investic}
+
+\textbf{Val IT} (ISACA, 2006/2008) je rámec doplňující COBIT, zaměřený na otázku:
+\textit{``Investujeme do správných věcí a dostáváme za to odpovídající hodnotu?''}
+
+\begin{center}
+\begin{tabular}{p{4cm}p{8cm}}
+\toprule
+\textbf{Doména Val IT} & \textbf{Obsah} \\
+\midrule
+\textbf{Value Governance (VG)} &
+  Governance IT investic: principy, role, odpovědnosti; IT Investment Board \\
+\textbf{Portfolio Management (PM)} &
+  Správa celého portfolia: selekce, prioritizace, rebalancování; transparentnost investic \\
+\textbf{Investment Management (IM)} &
+  Životní cyklus jednotlivé investice: Business Case $\to$ realizace $\to$ realizace přínosů \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Klíčový koncept -- Benefits Realization (realizace přínosů):}
+Nestačí projekt dokončit -- přínosy musejí být aktivně sledovány \textit{po} nasazení.
+Zodpovědnost za přínos nese \textbf{business owner} (ne IT), protože hodnotu generuje
+změna business procesů, nikoli technologie samotná.
+
+\textit{Příklad:} Projekt nového CRM stojí 5 mil.\ Kč. Business Case předpokládá 15\,\% nárůst konverzního poměru.
+Val IT vyžaduje: (a) změřit baseline před projektem, (b) monitoring KPI po 6 a 12 měsících,
+(c) formální review -- bylo 15\,\% dosaženo? Pokud ne, proč a co s tím?
+
+\subsubsection{Vztah PPM ke COBIT}
+
+V COBIT 5/2019 je řízení portfolia součástí domény \textbf{APO (Align, Plan, Organise)}:
+\begin{itemize}
+  \item \textbf{APO05 -- Manage Portfolio:} definovat investiční mix, hodnotit a vybírat programy,
+    monitorovat a rebalancovat portfolio
+  \item \textbf{APO06 -- Manage Budget and Costs:} finanční řízení IT portfolia, TCO sledování
+  \item \textbf{BAI01 -- Manage Programmes and Projects:} metodické řízení programů a projektů v portfoliu
+\end{itemize}
+
+COBIT tak propojuje governance IT (EDM -- co schvalujeme) s plánováním portfolia (APO05)
+a realizací projektů (BAI01).
+
 \begin{profesorbox}[Otázky profesorů k tématu: IT Governance]
 \textbf{Pour Jan, doc. Ing., CSc.}
 \begin{itemize}
@@ -434,5 +572,12 @@ Certifikace & Foundation, Practitioner... & Foundation, Specialist... \\
 \begin{itemize}
   \item Vyjmenujte 7 průvodních principů ITIL 4.
   \item Co je incident management a problem management?
+\end{itemize}
+\textbf{Maryška Miloš, doc. Ing., Ph.D. -- IT PPM}
+\begin{itemize}
+  \item Co je IT Project Portfolio Management a jaký je rozdíl od řízení jednotlivých projektů?
+  \item Jaká kritéria se používají pro selekci a prioritizaci IT projektů v portfoliu?
+  \item Co je Val IT a co znamená ``Benefits Realization''?
+  \item Jak kategorizujeme IT výdaje/projekty dle Gartnera (Run/Grow/Transform)?
 \end{itemize}
 \end{profesorbox}
