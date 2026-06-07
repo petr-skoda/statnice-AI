@@ -4,6 +4,25 @@
 
 \subsection{Typy podnikových IS}
 
+\subsubsection{Historický vývoj podnikových IS}
+
+\begin{itemize}
+  \item \textbf{70. léta -- MRP} (Material Requirements Planning): plánování materiálových
+    požadavků; vstupy: kusovníky, objednávky, zásoby; výstup: plán výroby.
+  \item \textbf{80. léta -- MRP II} (Manufacturing Resource Planning): MRP rozšířené o kapacitní
+    plánování (CRP); zohledňuje kapacity strojů, práce i financí. Souběžně vznikají automatizované
+    systémy řízení (ASŘ) a CIM -- Computer Integrated Manufacturing (CAD, CAPP, CAM).
+  \item \textbf{90. léta -- ERP} (Enterprise Resource Planning): integrace dílčích aplikací do
+    jednoho databázového a procesního modelu; pokrývá i nevýrobní podniky; automatizuje taktické
+    i operativní řízení.
+  \item \textbf{00. léta -- ERP II:} ERP rozšířené o moduly pro externí vztahy -- SCM, CRM, BI,
+    PLM, PDM, SRM, ERM; integrace mezipodnikových procesů (e-business, kolaborativní obchod).
+\end{itemize}
+
+Z technického hlediska: sálové počítače (70.--80. léta) $\rightarrow$ klient/server (80.--90.
+léta) $\rightarrow$ internet a multimediální rozhraní (90. léta) $\rightarrow$ architektura
+orientovaná na služby a mobilní sítě (00. léta) $\rightarrow$ cloud, AI a IoT (2010+).
+
 \subsubsection{ERP (Enterprise Resource Planning)}
 
 ERP je integrovaný podnikový IS pokrývající všechny hlavní podnikové procesy.
@@ -28,6 +47,83 @@ ERP je integrovaný podnikový IS pokrývající všechny hlavní podnikové pro
 
 \paragraph{Příklady ERP systémů}
 SAP ERP (S/4HANA), Oracle ERP Cloud, Microsoft Dynamics 365, Infor, Epicor, Helios, Money S5.
+
+\subsubsection{ERP II (Enterprise Resource Planning II)}
+
+ERP II rozšiřuje klasické ERP o systémy pro řízení \textbf{externích vztahů a procesů}.
+Zatímco ERP I pokrývá vnitropodnikové procesy (finance, výroba, HR, logistika), ERP II integruje
+i procesy mezipodnikové -- vztahy se zákazníky, dodavateli a obchodními partnery.
+
+\[
+  \text{ERP II} = \underbrace{\text{ERP}}_{\text{jádro}} + \text{SCM} + \text{CRM} + \text{BI}
+  + \text{PLM} + \text{PDM} + \text{SRM} + \text{ERM}
+\]
+
+\begin{itemize}
+  \item \textbf{ERP} -- jádro aplikační architektury; primárně pro pořizování a aktualizaci dat
+    (finance, výroba, HR, logistika); největší zdroj transakčních dat v podniku
+  \item \textbf{SCM (Supply Chain Management)} -- řízení dodavatelského řetězce; propojuje
+    dodavatele a odběratele pomocí ICT; optimalizuje všechny prvky dodavatelského řetězce
+  \item \textbf{CRM (Customer Relationship Management)} -- řízení vztahu se zákazníkem; oblasti:
+    prodej, marketing, zákaznická podpora
+  \item \textbf{BI (Business Intelligence)} -- manažerský IS; čerpá data ze všech modulů ERP II
+    (zejm. SCM a CRM); multidimenzionální analýza pro strategické rozhodování
+  \item \textbf{PDM (Product Data Management)} -- správa technických dat o výrobku
+    (materiály, ceny, kusovníky)
+  \item \textbf{PLM (Product Lifecycle Management)} -- řízení celého životního cyklu výrobku
+    (Investování $\rightarrow$ Vstup na trh $\rightarrow$ Růst $\rightarrow$ Zralost)
+  \item \textbf{SRM (Supplier Relationship Management)} -- řízení vztahu s dodavateli
+    (analogie CRM na straně dodavatelů)
+  \item \textbf{ERM (Employee Relationship Management)} -- podpora vztahů zaměstnanec--podnik;
+    motivace, benefity, osobní rozvoj, podniková kultura
+\end{itemize}
+
+\paragraph{Vývojové tendence integrace IS podniků}
+\begin{enumerate}
+  \item \textbf{Integrace programů} -- propojení modulů a knihoven (raná fáze)
+  \item \textbf{Společná databáze} -- sdílení dat různými aplikacemi
+  \item \textbf{Balíky (Packaged Software)} -- komplexní TASW řešení (ERP, CRM)
+  \item \textbf{Middleware} -- integrace SW z různých prostředí (Java, C\#, VisualBasic)
+  \item \textbf{EAI (Enterprise Application Integration)} -- propojení aplikací různých balíků
+    (CRM + ERP při správě zákaznických dat)
+  \item \textbf{B2B (Business-to-Business)} -- propojení aplikací různých organizací
+    v rámci dodavatelského řetězce
+\end{enumerate}
+
+\subsubsection{MRP II (Manufacturing Resource Planning II)}
+
+MRP II plánuje jak materiálové, tak kapacitní zdroje výroby:
+\[
+  \text{MRP II} = \text{MRP} \;(\text{materiál}) + \text{CRP} \;(\text{kapacity})
+\]
+
+\paragraph{MRP (Material Requirements Planning)}
+Metoda stanovující materiálové požadavky pomocí kusovníků (BOM), stavu skladu a plánu výroby.
+Orientováno na produkt; respektuje časové požadavky a priority.
+
+\paragraph{CRP (Capacity Requirements Planning)}
+Určuje rozsah disponibilních kapacit a jejich obsazení; stanovuje množství práce a strojového
+času potřebného ke splnění výrobních zakázek.
+
+\paragraph{Vstupy a výstupy MRP II}
+\begin{itemize}
+  \item \textbf{Vstupy:} požadavky výrobního plánu, alokace, stav skladových zásob,
+    očekávané příchody materiálu
+  \item \textbf{Výstupy:} čisté požadavky na materiál, nákupní objednávky nebo výrobní příkazy
+\end{itemize}
+
+MRP II zahrnuje i plán obchodu, výroby a nákupu a přehledy o financích zakázek.
+Lze využít pro hromadnou i zakázkovou výrobu.
+Moderní nadstavba \textbf{APS (Advanced Planning and Scheduling)} doplňuje MRP II
+o simulace a what-if analýzy pro optimalizaci zdrojů a dodacích lhůt.
+
+\paragraph{Alternativní metody plánování}
+\begin{itemize}
+  \item \textbf{JIT (Just-In-Time)} -- minimalizace zásob; cíl ``seven zeros'' (nulové zmetek,
+    zásoby, časy seřízení, manipulace, přerušení, časy dodávek, velikost dávky 1)
+  \item \textbf{TOC (Theory of Constraints)} -- maximalizace průtoku přes úzká místa (omezení);
+    OPT (Optimized Production Technology) -- softwarová realizace TOC
+\end{itemize}
 
 \subsubsection{CRM (Customer Relationship Management)}
 
@@ -116,7 +212,75 @@ Příklady: Siemens Opcenter, SAP ME, Rockwell Automation FactoryTalk, GE Digita
     \end{itemize}
 \end{enumerate}
 
-\subsubsection{IASW vs. TASW}
+\subsubsection{Kritéria výběru ERP}
+
+Na výběr konkrétního ERP řešení mají největší vliv tři skupiny kritérií:
+
+\paragraph{1. Dodavatel systému}
+\begin{itemize}
+  \item \textbf{Obsahová orientace} -- jaká odvětví dodavatel pokrývá (průmysl, obchod, banky,
+    zdravotnictví\ldots)
+  \item \textbf{Personální a ekonomická síla} -- počet odborníků, finanční stabilita, výhled rozvoje
+    produktu
+  \item \textbf{Reference firmy} -- zákazníci v daném odvětví; možnost návštěvy referenční instalace;
+    demoverze systému
+  \item \textbf{Poskytované služby} -- hotline, servisní, projekční, školicí a konzultační služby;
+    podmínky pro update
+  \item \textbf{Cenové hledisko} -- celkové TCO (licenční, implementační i provozní náklady);
+    jednorázové vs. pravidelné platby
+\end{itemize}
+
+\paragraph{2. Systém ERP -- technická a funkční kritéria}
+\begin{itemize}
+  \item \textbf{Funkcionalita SW} -- rozsah pokrytí podnikových procesů; funkční soulad s potřebami
+    zákazníka; dostupné moduly (logistika, finance, HR, specializované)
+  \item \textbf{Architektura a modularita} -- modularita (``stavebnicovost''), provozní prostředí
+    (HW, OS, DB systém), otevřenost pro rozšíření o moduly třetích stran
+  \item \textbf{Vnější integrita} -- vazby na další systémy (CAD, PDM, CRM, SCM, APS, BI,
+    e-business); podporované standardy (HTTP, XML, EDI)
+  \item \textbf{Lokalizace} -- soulad s národní legislativou; přizpůsobení jazyka, měny, účetních
+    standardů, archivace dle zákonů
+  \item \textbf{Uživatelský komfort} -- ergonomie, snadnost přístupu, možnost přizpůsobení rozhraní
+\end{itemize}
+
+\paragraph{3. Uživatel systému}
+\begin{itemize}
+  \item Způsob a podmínky dodání ERP (platební podmínky, školení, podmínky pro update)
+  \item Integrace ERP s ostatními podnikovými aplikacemi; zákaznicky přizpůsobená dokumentace
+  \item Potřeby a technická úroveň cílových uživatelů
+\end{itemize}
+
+\subsubsection{Parametrizovatelná řešení (TASW) vs. individuální vývoj (IASW)}
+
+\paragraph{Co jsou parametrizovatelná řešení?}
+\textbf{Parametrizace} = konfigurace nebo nastavení aplikačního SW za účelem pokrytí potřeb podniku
+\emph{bez nutnosti přeprogramování}. Parametrizovatelný (typový) SW se prodává ``jako krabice'' a
+nabízí skupiny nastavitelných parametrů:
+
+\begin{itemize}
+  \item Organizační struktura podniku
+  \item Způsob vedení financí a účetní osnova
+  \item Výběr požadovaných modulů
+  \item Hierarchie produktů a ceník
+  \item Legislativní nastavení (DPH, účetní standardy -- GAAP, IFRS, IAS)
+  \item Obrazovky a styl uživatelského rozhraní
+\end{itemize}
+
+\textbf{Hlavní důvody prosazení parametrizovatelných řešení:}
+\begin{itemize}
+  \item Rychlost implementace -- kupuje se prakticky hotový produkt, který se jen nastaví
+  \item Nižší cena pořízení -- náklady na vývoj jsou rozloženy mezi více zákazníků
+  \item Best practices -- nejlepší zkušenosti širokého okruhu uživatelů z celého odvětví
+  \item Profesionální řešení každé komponenty i celého IS/IT
+  \item Větší šance na garanaci kvality a stabilitu rozvoje
+  \item Snadnější dimenzování technologické infrastruktury
+  \item Nižší nároky na testování (ověřená funkcionalita)
+  \item Standardní realizace upgradu -- průběžný vývoj dodavatelem
+\end{itemize}
+
+\textbf{Customizace} je nadřazený pojem zahrnující jak parametrizaci, tak přeprogramování.
+Z pohledu podniku: parametrizovatelný ASW znamená větší jistotu.
+Z pohledu vývojáře: parametrizovatelný ASW je možné vícekrát prodat.
 
 \paragraph{IASW (Individual Application Software) -- Individuální software}
 \begin{itemize}
@@ -336,31 +500,88 @@ umožňuje přesněji vyhodnotit nákladovost jednotlivých IS komponent nebo pr
 \paragraph{Benchmarking IS}
 Porovnání výkonnosti IS s odvětvovými standardy nebo konkurencí (Gartner IT benchmarks, ITIL benchmarking).
 
+\subsubsection{Situace na trhu ERP a trendy IS podniků}
+
+\paragraph{Trendy na trhu ERP}
+\begin{itemize}
+  \item \textbf{Rozšiřování do SME} -- dříve výsada velkých podniků; nyní i malé a střední podniky
+    (kratší implementace, nižší cena, dotace)
+  \item \textbf{Zkracování doby implementace} -- přednastavená oborová řešení (templates, branžové
+    šablony) eliminují potřebu analýzy od nuly
+  \item \textbf{SaaS a cloud ERP} -- provoz v cloudu; zákazník platí předplatné (OPEX) namísto
+    licence a HW (CAPEX); odpovědnost za provoz přechází na dodavatele; příklad -- Salesforce
+  \item \textbf{Open source ERP} -- otevřená platforma; výhoda komunity a standardizace; nutná
+    komerční podpora pro enterprise nasazení (např. Odoo, ERPNext)
+  \item \textbf{Integrace a mobilní komunikace} -- XML integrace s partnery; mobilní přístup k datům;
+    webové portály a kolaborativní scénáře
+  \item \textbf{Nové aplikace} -- PDM a MES se stávají součástí ERP II portfolia
+  \item \textbf{Akvizice} -- velké firmy skupují menší dodavatele a rozšiřují portfolio
+    (SAP koupil Concur, Ariba; Oracle koupil PeopleSoft, Siebel)
+  \item \textbf{APS} -- MRP II je stále více doplňováno o pokročilé metody optimalizace,
+    simulace a what-if analýzy
+\end{itemize}
+
+\paragraph{Situace na českém trhu ERP}
+Tržní podíly dodavatelů ERP v ČR:
+
+\begin{center}
+\begin{tabular}{llp{6cm}}
+\toprule
+\textbf{Dodavatel} & \textbf{Tržní podíl} & \textbf{Poznámka} \\
+\midrule
+SAP & 27{,}2\,\% & Největší globální ERP; dominantní u velkých podniků \\
+Microsoft Dynamics & 6{,}7\,\% & ERP pro střední podniky; integrace s Office 365 \\
+Asseco Solutions & 6{,}4\,\% & Česko-slovenský dodavatel (Helios) \\
+Infor & 5{,}0\,\% & Oborové ERP (výroba, distribuce) \\
+Oracle & $\approx$5\,\% & Silný v databázích i ERP; Oracle ERP Cloud \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Charakteristika současného trhu ERP}
+\begin{itemize}
+  \item \textbf{Silná koncentrace} -- velké množství dodavatelů, ale úzký výběr produktů
+    s dostatečnou lokalizací a podporou
+  \item \textbf{Branžová specializace} -- oborové (vertikální) ERP pro automobilový průmysl,
+    zdravotnictví, veřejnou správu aj.; odlišnosti zejména v logistických modulech
+  \item \textbf{Přednastavená řešení} -- implementační partneři dodávají hotové oborové šablony,
+    čímž se snižuje cena a délka implementace
+  \item \textbf{Nové dimenze} -- integrace CRM, BI, e-business, webových portálů a kolaborativních
+    scénářů; zákazníci i dodavatelé se napojují na ERP přímo
+\end{itemize}
+
 \begin{profesorbox}[Otázky profesorů k tématu: Podnikové IS]
 \textbf{Pour Jan, doc. Ing., CSc.}
 \begin{itemize}
   \item Co je ERP a jaké jsou jeho typické moduly?
+  \item Co je ERP II a jak se liší od ERP I? Jaké moduly tvoří ERP II?
   \item Jaké jsou 4 etapy implementace podnikového IS?
   \item Jaký je rozdíl mezi CRM a ERP?
+  \item Jaká jsou hlavní kritéria výběru ERP systému?
+  \item Jak vypadá situace na českém trhu ERP (tržní podíly)?
 \end{itemize}
 \textbf{Řepa Václav, prof. Ing., CSc.}
 \begin{itemize}
   \item Jaký je rozdíl mezi IASW a TASW? Kdy co použít?
+  \item Jaké jsou hlavní důvody prosazení parametrizovatelných řešení (TASW)?
   \item Jaké jsou přínosy a rizika implementace podnikového IS?
 \end{itemize}
 \textbf{Chudán David, Ing., Ph.D.}
 \begin{itemize}
   \item Co je SaaS a jak se liší od IaaS a PaaS?
   \item Co je SOA a jaké jsou jeho výhody?
+  \item Co je MRP II? Jak se liší od MRP a jak se vztahuje k ERP?
 \end{itemize}
 \textbf{Maryška Miloš, doc. Ing., Ph.D.}
 \begin{itemize}
   \item Co je MES a jak se liší od ERP?
   \item Jaký je rozdíl mezi Public, Private a Hybrid cloud?
+  \item Popište historický vývoj podnikových IS (MRP $\rightarrow$ ERP II).
 \end{itemize}
 \textbf{Sudzina František, Mgr.\ et Mgr.\ Ing., Ph.D.}
 \begin{itemize}
   \item Co je SCM a jaké jsou jeho hlavní funkce?
   \item Jaké jsou výhody cloudových IS oproti on-premise řešením?
+  \item Jaké jsou trendy na trhu ERP (cloud, SaaS, SME, akvizice)?
 \end{itemize}
 \end{profesorbox}
